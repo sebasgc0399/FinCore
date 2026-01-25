@@ -1,3 +1,7 @@
+ï»¿import { Link } from "react-router-dom"
+
+import { useGoogleSignIn } from "@/features/auth/hooks/useGoogleSignIn"
+
 import { Button } from "@/components/ui/button"
 import {
   Card,
@@ -8,9 +12,11 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 
-export const LoginPage = (): JSX.Element => {
+export const LoginPage = () => {
+  const { errorMessage, isLoading, signIn } = useGoogleSignIn()
+
   const handleGoogleSignIn = (): void => {
-    // TODO: Integrate Google Sign-In with Firebase
+    void signIn()
   }
 
   return (
@@ -23,7 +29,7 @@ export const LoginPage = (): JSX.Element => {
             </div>
             <div className="space-y-1">
               <CardTitle className="text-2xl">FinCore</CardTitle>
-              <CardDescription>Inicia sesión para continuar</CardDescription>
+              <CardDescription>Inicia sesiÃ³n para continuar</CardDescription>
             </div>
           </div>
         </CardHeader>
@@ -31,23 +37,33 @@ export const LoginPage = (): JSX.Element => {
           <p className="text-sm text-muted-foreground">
             Gestiona tu dinero con claridad y control desde cualquier lugar.
           </p>
-          <Button className="w-full" onClick={handleGoogleSignIn} type="button">
+          <Button
+            className="w-full"
+            disabled={isLoading}
+            onClick={handleGoogleSignIn}
+            type="button"
+          >
             <span
               aria-hidden="true"
               className="flex h-5 w-5 items-center justify-center rounded-full bg-foreground/10 text-xs font-semibold text-foreground/70"
             >
               G
             </span>
-            Continuar con Google
+            {isLoading ? "Conectando..." : "Continuar con Google"}
           </Button>
+          {errorMessage ? (
+            <p className="text-sm text-destructive" role="alert">
+              {errorMessage}
+            </p>
+          ) : null}
         </CardContent>
         <CardFooter className="justify-center gap-4 text-xs text-muted-foreground">
-          <a className="underline-offset-4 hover:underline" href="#">
-            Términos
-          </a>
-          <a className="underline-offset-4 hover:underline" href="#">
+          <Link className="underline-offset-4 hover:underline" to="/terms">
+            TÃ©rminos
+          </Link>
+          <Link className="underline-offset-4 hover:underline" to="/privacy">
             Privacidad
-          </a>
+          </Link>
         </CardFooter>
       </Card>
     </main>

@@ -70,6 +70,7 @@ Rules:
 ## React Component Rules
 - Functional components only.
 - Named exports only; no default exports.
+- **Do not use explicit `: JSX.Element` return type; let TypeScript infer it.**
 - `const ComponentName = (props: Props) => { ... }`
 - Destructure props at the top of the component.
 - Split UI from data fetching by using custom hooks.

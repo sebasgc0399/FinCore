@@ -22,7 +22,7 @@ import { SettingsSupportPage } from "@/features/settings/SettingsSupportPage"
 import { useIsAdmin } from "@/features/settings/hooks/useIsAdmin"
 
 export const AppRouter = () => {
-  const isAdmin = useIsAdmin()
+  const { isAdmin, loading } = useIsAdmin()
 
   return (
     <BrowserRouter>
@@ -47,7 +47,11 @@ export const AppRouter = () => {
             <Route element={<SettingsLegalPage />} path="legal" />
             <Route
               element={
-                isAdmin ? <SettingsAdminPage /> : <Navigate replace to="/settings" />
+                loading ? null : isAdmin ? (
+                  <SettingsAdminPage />
+                ) : (
+                  <Navigate replace to="/settings" />
+                )
               }
               path="admin"
             />

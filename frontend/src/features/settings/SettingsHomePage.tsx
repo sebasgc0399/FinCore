@@ -14,7 +14,7 @@ type SettingsSection = {
 
 export const SettingsHomePage = () => {
   const { t } = useTranslation("settings")
-  const isAdmin = useIsAdmin()
+  const { isAdmin, loading } = useIsAdmin()
 
   const sections: SettingsSection[] = [
     {
@@ -48,7 +48,8 @@ export const SettingsHomePage = () => {
     description: t("home.sections.admin.description"),
     Icon: Shield,
   }
-  const visibleSections = isAdmin ? [...sections, adminSection] : sections
+  const visibleSections =
+    isAdmin && !loading ? [...sections, adminSection] : sections
 
   return (
     <section className="space-y-3">

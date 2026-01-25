@@ -81,6 +81,66 @@
     "privacy": "Privacidad"
   },
   "admin": {
-    "description": "Sección administrativa."
+    "description": "Sección administrativa.",
+    "systemCategories": {
+      "title": "Categorías del sistema",
+      "description": "Administra las categorías globales usadas en la app.",
+      "loading": "Cargando categorías del sistema...",
+      "empty": "Aún no hay categorías del sistema.",
+      "actions": {
+        "new": "Nueva categoría",
+        "edit": "Editar",
+        "delete": "Eliminar",
+        "cancel": "Cancelar",
+        "create": "Crear",
+        "save": "Guardar"
+      },
+      "form": {
+        "createTitle": "Nueva categoría del sistema",
+        "editTitle": "Editar categoría del sistema",
+        "createDescription": "Define los datos base de la categoría.",
+        "editDescription": "Actualiza los datos base de la categoría.",
+        "idLabel": "ID",
+        "idHint": "Identificador único usado como ID del documento.",
+        "idPlaceholder": "ej. comida",
+        "labelKeyLabel": "Clave de etiqueta",
+        "labelKeyPlaceholder": "categories.food",
+        "iconLabel": "Icono",
+        "iconPlaceholder": "Tag",
+        "kindLabel": "Tipo",
+        "kindDescription": "Selecciona gasto o ingreso.",
+        "orderLabel": "Orden",
+        "orderPlaceholder": "0",
+        "colorLabel": "Color (opcional)",
+        "colorPlaceholder": "ej. #1F2937",
+        "parentIdLabel": "ID padre (opcional)",
+        "parentIdPlaceholder": "ej. esenciales"
+      },
+      "kind": {
+        "expense": "Gasto",
+        "income": "Ingreso"
+      },
+      "confirmDelete": {
+        "title": "Eliminar categoría",
+        "description": "¿Eliminar {{name}}? Esta acción no se puede deshacer.",
+        "confirm": "Eliminar"
+      },
+      "meta": {
+        "id": "ID: {{value}}",
+        "labelKey": "Clave: {{value}}",
+        "icon": "Icono: {{value}}",
+        "kind": "Tipo: {{value}}",
+        "order": "Orden: {{value}}",
+        "color": "Color: {{value}}",
+        "parentId": "Padre: {{value}}"
+      },
+      "errors": {
+        "load": "No pudimos cargar las categorías del sistema.",
+        "save": "No pudimos guardar la categoría.",
+        "delete": "No pudimos eliminar la categoría.",
+        "validation": "Completa los campos obligatorios.",
+        "invalidOrder": "El orden debe ser un número mayor o igual a 0."
+      }
+    }
   }
 }

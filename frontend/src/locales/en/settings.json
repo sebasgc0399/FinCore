@@ -81,6 +81,66 @@
     "privacy": "Privacy"
   },
   "admin": {
-    "description": "Administrative area."
+    "description": "Administrative area.",
+    "systemCategories": {
+      "title": "System categories",
+      "description": "Manage the global categories used across the app.",
+      "loading": "Loading system categories...",
+      "empty": "No system categories yet.",
+      "actions": {
+        "new": "New category",
+        "edit": "Edit",
+        "delete": "Delete",
+        "cancel": "Cancel",
+        "create": "Create",
+        "save": "Save"
+      },
+      "form": {
+        "createTitle": "New system category",
+        "editTitle": "Edit system category",
+        "createDescription": "Define the base category details.",
+        "editDescription": "Update the base category details.",
+        "idLabel": "ID",
+        "idHint": "Unique identifier used as the document ID.",
+        "idPlaceholder": "e.g. food",
+        "labelKeyLabel": "Label key",
+        "labelKeyPlaceholder": "categories.food",
+        "iconLabel": "Icon",
+        "iconPlaceholder": "Tag",
+        "kindLabel": "Type",
+        "kindDescription": "Select expense or income.",
+        "orderLabel": "Order",
+        "orderPlaceholder": "0",
+        "colorLabel": "Color (optional)",
+        "colorPlaceholder": "e.g. #1F2937",
+        "parentIdLabel": "Parent ID (optional)",
+        "parentIdPlaceholder": "e.g. essentials"
+      },
+      "kind": {
+        "expense": "Expense",
+        "income": "Income"
+      },
+      "confirmDelete": {
+        "title": "Delete category",
+        "description": "Delete {{name}}? This action can't be undone.",
+        "confirm": "Delete"
+      },
+      "meta": {
+        "id": "ID: {{value}}",
+        "labelKey": "Key: {{value}}",
+        "icon": "Icon: {{value}}",
+        "kind": "Type: {{value}}",
+        "order": "Order: {{value}}",
+        "color": "Color: {{value}}",
+        "parentId": "Parent: {{value}}"
+      },
+      "errors": {
+        "load": "We couldn't load system categories.",
+        "save": "We couldn't save the category.",
+        "delete": "We couldn't delete the category.",
+        "validation": "Please complete all required fields.",
+        "invalidOrder": "Order must be a number greater than or equal to 0."
+      }
+    }
   }
 }

@@ -1,9 +1,11 @@
 ﻿import { Link, NavLink, Outlet, useLocation } from "react-router-dom"
+import { useMemo, useState } from "react"
 import {
   BarChart3,
   Home,
   List,
   LogOut,
+  Plus,
   Settings,
   Sparkles,
   Target,
@@ -11,6 +13,7 @@ import {
 
 import { cn } from "@/lib/utils"
 import { useSignOut } from "@/features/auth/hooks/useSignOut"
+import { NewExpenseSheet } from "@/features/expenses/components/NewExpenseSheet"
 import { Button } from "@/components/ui/button"
 
 type NavItem = {
@@ -37,13 +40,32 @@ const TITLE_BY_PATH = {
   "/settings": "Configuración",
 } as const
 
+const FAB_PATH_PREFIXES = [
+  "/",
+  "/movimientos",
+  "/objetivos",
+  "/metricas",
+  "/asesor",
+] as const
+
 export const AppShell = () => {
   const { pathname } = useLocation()
   const { isLoading, signOut } = useSignOut()
+  const [isNewExpenseOpen, setIsNewExpenseOpen] = useState(false)
+
   const title = TITLE_BY_PATH[pathname as keyof typeof TITLE_BY_PATH] ?? "FinCore"
+  const showFab = useMemo(() => {
+    return FAB_PATH_PREFIXES.some((prefix) =>
+      prefix === "/" ? pathname === "/" : pathname.startsWith(prefix)
+    )
+  }, [pathname])
 
   const handleSignOut = (): void => {
     void signOut()
+  }
+
+  const handleFabClick = (): void => {
+    setIsNewExpenseOpen(true)
   }
 
   return (
@@ -85,6 +107,23 @@ export const AppShell = () => {
       <main className="pb-20 pt-4">
         <Outlet />
       </main>
+
+      {showFab ? (
+        <Button
+          aria-label="Nuevo gasto"
+          className="fixed bottom-20 right-4 z-30 h-12 w-12 rounded-full shadow-lg"
+          onClick={handleFabClick}
+          variant="default"
+        >
+          <Plus className="h-5 w-5" />
+          <span className="sr-only">Nuevo gasto</span>
+        </Button>
+      ) : null}
+
+      <NewExpenseSheet
+        open={isNewExpenseOpen}
+        onOpenChange={setIsNewExpenseOpen}
+      />
 
       <nav className="fixed bottom-0 left-0 right-0 border-t bg-background/95 backdrop-blur">
         <div className="mx-auto grid w-full max-w-4xl grid-cols-5 gap-1 px-2 py-1.5">

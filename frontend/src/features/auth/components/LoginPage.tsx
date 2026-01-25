@@ -1,5 +1,6 @@
-﻿import { Link } from "react-router-dom"
+﻿import { Link, Navigate } from "react-router-dom"
 
+import { useAuth } from "@/features/auth/hooks/useAuth"
 import { useGoogleSignIn } from "@/features/auth/hooks/useGoogleSignIn"
 
 import { Button } from "@/components/ui/button"
@@ -12,11 +13,16 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 
-export const LoginPage = () => {
+export const LoginPage = (): JSX.Element => {
+  const { user } = useAuth()
   const { errorMessage, isLoading, signIn } = useGoogleSignIn()
 
   const handleGoogleSignIn = (): void => {
     void signIn()
+  }
+
+  if (user) {
+    return <Navigate replace to="/" />
   }
 
   return (

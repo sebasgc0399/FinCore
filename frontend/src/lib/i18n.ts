@@ -28,9 +28,8 @@ i18n
       escapeValue: false,
     },
     detection: {
-      order: ["localStorage", "navigator"],
-      lookupLocalStorage: "fincore_lang",
-      caches: ["localStorage"],
+      order: ["navigator"],
+      caches: [],
     },
   })
 

@@ -22,18 +22,6 @@ type LanguageCode = UserDoc["preferences"]["language"]
 
 const SUPPORTED_LANGUAGES = ["es", "en"] as const
 
-const getStorageItem = (key: string): string | null => {
-  if (typeof window === "undefined") {
-    return null
-  }
-
-  try {
-    return window.localStorage.getItem(key)
-  } catch {
-    return null
-  }
-}
-
 const normalizeLanguage = (
   value: string | null | undefined
 ): LanguageCode | null => {
@@ -96,11 +84,6 @@ const toError = (error: unknown): Error => {
 }
 
 export const getInitialLanguage = (): LanguageCode => {
-  const storedLanguage = normalizeLanguage(getStorageItem("fincore_lang"))
-  if (storedLanguage) {
-    return storedLanguage
-  }
-
   const browserLanguage =
     typeof navigator !== "undefined" ? normalizeLanguage(navigator.language) : null
 
@@ -108,21 +91,16 @@ export const getInitialLanguage = (): LanguageCode => {
 }
 
 export const getInitialThemeMode = (): ThemePreference => {
-  const storedMode = getStorageItem("fincore_theme_mode")
-  if (storedMode === "system" || storedMode === "manual") {
-    return storedMode
-  }
-
   return "system"
 }
 
 export const getInitialTheme = (): ThemeValue => {
-  const storedTheme = getStorageItem("fincore_theme")
-  if (storedTheme === "light" || storedTheme === "dark") {
-    return storedTheme
+  if (typeof window === "undefined") {
+    return "light"
   }
 
-  return "light"
+  const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches
+  return prefersDark ? "dark" : "light"
 }
 
 export const ensureUserDocument = async (user: User): Promise<void> => {

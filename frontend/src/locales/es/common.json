@@ -9,5 +9,9 @@
     "signOut": "Cerrar sesión",
     "newExpense": "Nuevo gasto"
   },
+  "categories": {
+    "other": "Otros",
+    "income": "Ingreso"
+  },
   "underConstruction": "En construcción."
 }

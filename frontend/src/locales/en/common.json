@@ -9,5 +9,9 @@
     "signOut": "Sign out",
     "newExpense": "New expense"
   },
+  "categories": {
+    "other": "Other",
+    "income": "Income"
+  },
   "underConstruction": "Under construction."
 }

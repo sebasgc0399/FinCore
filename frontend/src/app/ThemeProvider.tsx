@@ -9,27 +9,9 @@ type ThemeProviderProps = {
   children: ReactNode
 }
 
-const getInitialThemeMode = (): ThemeMode => {
-  if (typeof window === "undefined") {
-    return "system"
-  }
-
-  const storedMode = localStorage.getItem("fincore_theme_mode")
-  if (storedMode === "system" || storedMode === "manual") {
-    return storedMode
-  }
-
-  return "system"
-}
-
-const getInitialTheme = (): Theme => {
+const getSystemTheme = (): Theme => {
   if (typeof window === "undefined") {
     return "light"
-  }
-
-  const storedTheme = localStorage.getItem("fincore_theme")
-  if (storedTheme === "light" || storedTheme === "dark") {
-    return storedTheme
   }
 
   const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches
@@ -39,8 +21,8 @@ const getInitialTheme = (): Theme => {
 export const ThemeProvider = ({ children }: ThemeProviderProps) => {
   const prefersDark = useMediaQuery("(prefers-color-scheme: dark)")
   const systemTheme: Theme = prefersDark ? "dark" : "light"
-  const [themeMode, setThemeMode] = useState<ThemeMode>(getInitialThemeMode)
-  const [theme, setTheme] = useState<Theme>(getInitialTheme)
+  const [themeMode, setThemeMode] = useState<ThemeMode>("system")
+  const [theme, setTheme] = useState<Theme>(getSystemTheme)
 
   const effectiveTheme = themeMode === "manual" ? theme : systemTheme
 
@@ -90,25 +72,16 @@ export const ThemeProvider = ({ children }: ThemeProviderProps) => {
     }
   }, [effectiveTheme])
 
-  useEffect(() => {
-    localStorage.setItem("fincore_theme_mode", themeMode)
-  }, [themeMode])
-
-  useEffect(() => {
-    if (themeMode === "manual") {
-      localStorage.setItem("fincore_theme", theme)
-    }
-  }, [themeMode, theme])
-
   const value = useMemo(
     () => ({
       themeMode,
       setThemeMode: setThemeModeWithSync,
       theme,
+      setTheme,
       toggleTheme,
       effectiveTheme,
     }),
-    [themeMode, setThemeModeWithSync, theme, toggleTheme, effectiveTheme]
+    [themeMode, setThemeModeWithSync, theme, setTheme, toggleTheme, effectiveTheme]
   )
 
   return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>

@@ -1,11 +1,16 @@
 import { useTranslation } from "react-i18next"
 
+import type { Theme } from "@/app/theme-context"
 import { cn } from "@/lib/utils"
 import { useTheme } from "@/hooks/useTheme"
 
 import "./ThemeToggle.css"
 
-export const ThemeToggle = () => {
+type ThemeToggleProps = {
+  onToggle?: (theme: Theme) => void
+}
+
+export const ThemeToggle = ({ onToggle }: ThemeToggleProps) => {
   // Credit: Pixel Art Theme Switcher by Jamie Wilson.
   const { t } = useTranslation("settings")
   const { themeMode, toggleTheme, effectiveTheme } = useTheme()
@@ -15,6 +20,16 @@ export const ThemeToggle = () => {
   const ariaLabel = isDark
     ? t("account.appearance.toggleAriaOn")
     : t("account.appearance.toggleAriaOff")
+
+  const handleToggle = () => {
+    if (isDisabled) {
+      return
+    }
+
+    const nextTheme: Theme = isDark ? "light" : "dark"
+    toggleTheme()
+    onToggle?.(nextTheme)
+  }
 
   return (
     <div className="fincore-theme-toggle theme-toggle-wrapper">
@@ -27,7 +42,7 @@ export const ThemeToggle = () => {
           isDisabled && "theme-switcher-disabled"
         )}
         disabled={isDisabled}
-        onClick={toggleTheme}
+        onClick={handleToggle}
         type="button"
       >
         <div className="sun" aria-hidden="true" />

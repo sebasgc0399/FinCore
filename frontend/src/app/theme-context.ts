@@ -8,6 +8,7 @@ export type ThemeContextValue = {
   themeMode: ThemeMode
   setThemeMode: (mode: ThemeMode) => void
   theme: Theme
+  setTheme: (theme: Theme) => void
   toggleTheme: () => void
   effectiveTheme: Theme
 }

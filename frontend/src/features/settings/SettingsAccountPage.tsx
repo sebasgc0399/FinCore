@@ -1,5 +1,11 @@
 import { useTranslation } from "react-i18next"
 
+import { useAuth } from "@/features/auth/hooks/useAuth"
+import {
+  updateUserPreferences,
+  type UserPreferencesUpdate,
+} from "@/features/settings/services/userPreferences"
+
 import {
   Card,
   CardContent,
@@ -15,20 +21,50 @@ import { useTheme } from "@/hooks/useTheme"
 
 export const SettingsAccountPage = () => {
   const { t, i18n } = useTranslation("settings")
-  const { themeMode, setThemeMode } = useTheme()
+  const { user, setError } = useAuth()
+  const { themeMode, setThemeMode, theme, effectiveTheme } = useTheme()
   const currentLanguage = i18n.language?.startsWith("en") ? "en" : "es"
   const isSystemMode = themeMode === "system"
   const systemSwitchId = "system-theme-switch"
   const systemHintId = "system-theme-hint"
 
+  const getErrorMessage = (error: unknown): string => {
+    if (error instanceof Error && error.message.trim() !== "") {
+      return error.message
+    }
+
+    return "No pudimos guardar tus preferencias. Intenta de nuevo."
+  }
+
+  const persistPreferences = async (
+    updates: UserPreferencesUpdate
+  ): Promise<void> => {
+    if (!user?.uid) {
+      return
+    }
+
+    try {
+      await updateUserPreferences(user.uid, updates)
+    } catch (error: unknown) {
+      setError(getErrorMessage(error))
+    }
+  }
+
   const handleLanguageChange = (nextLanguage: string): void => {
     const languageValue = nextLanguage === "en" ? "en" : "es"
-    localStorage.setItem("fincore_lang", languageValue)
     void i18n.changeLanguage(languageValue)
+    void persistPreferences({ language: languageValue })
   }
 
   const handleSystemThemeChange = (checked: boolean): void => {
-    setThemeMode(checked ? "system" : "manual")
+    const nextMode = checked ? "system" : "manual"
+    const nextTheme = nextMode === "manual" ? effectiveTheme : theme
+    setThemeMode(nextMode)
+    void persistPreferences({ themeMode: nextMode, theme: nextTheme })
+  }
+
+  const handleThemeToggle = (nextTheme: "light" | "dark") => {
+    void persistPreferences({ themeMode: "manual", theme: nextTheme })
   }
 
   return (
@@ -53,7 +89,7 @@ export const SettingsAccountPage = () => {
                   {t("settings:account.appearance.toggleHint")}
                 </p>
               </div>
-              <ThemeToggle />
+              <ThemeToggle onToggle={handleThemeToggle} />
             </div>
             <div className="space-y-1">
               <div className="flex items-center justify-between gap-4">

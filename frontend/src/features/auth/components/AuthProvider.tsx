@@ -1,8 +1,11 @@
 ﻿import { createContext, useEffect, useState, type ReactNode } from "react"
 import { onAuthStateChanged, type User } from "firebase/auth"
 
+import { i18n } from "@/lib/i18n"
 import { auth } from "@/lib/firebase"
 import { bootstrapUser } from "@/features/auth/services/userBootstrap"
+import { listenUserPreferences } from "@/features/settings/services/userPreferences"
+import { useTheme } from "@/hooks/useTheme"
 
 type AuthContextValue = {
   user: User | null
@@ -29,6 +32,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [user, setUser] = useState<User | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const { setThemeMode, setTheme } = useTheme()
 
   useEffect(() => {
     let isMounted = true
@@ -76,10 +80,42 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     }
 
     let isMounted = true
+    let unsubscribe: (() => void) | null = null
 
     const runBootstrap = async () => {
       try {
         await bootstrapUser(user)
+
+        if (!isMounted) {
+          return
+        }
+
+        unsubscribe = listenUserPreferences(
+          user.uid,
+          (preferences) => {
+            if (!isMounted) {
+              return
+            }
+
+            if (i18n.language !== preferences.language) {
+              void i18n.changeLanguage(preferences.language)
+            }
+
+            if (preferences.themeMode === "system") {
+              setThemeMode("system")
+              return
+            }
+
+            setThemeMode("manual")
+            setTheme(preferences.theme)
+          },
+          (preferencesError) => {
+            if (!isMounted) {
+              return
+            }
+            setError(getErrorMessage(preferencesError))
+          }
+        )
       } catch (bootstrapError: unknown) {
         if (!isMounted) {
           return
@@ -92,8 +128,11 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
     return () => {
       isMounted = false
+      if (unsubscribe) {
+        unsubscribe()
+      }
     }
-  }, [user, setError])
+  }, [user, setError, setThemeMode, setTheme])
 
   return (
     <AuthContext.Provider value={{ user, loading, error, setError }}>

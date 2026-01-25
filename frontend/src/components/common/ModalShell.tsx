@@ -1,5 +1,6 @@
 import type { ReactNode } from "react"
 
+import { cn } from "@/lib/utils"
 import {
   Dialog,
   DialogContent,
@@ -25,6 +26,10 @@ type ModalShellProps = {
   description?: string
   children: ReactNode
   footer?: ReactNode
+  snapPoints?: number[]
+  activeSnapPoint?: number
+  closeThreshold?: number
+  contentClassName?: string
 }
 
 export const ModalShell = ({
@@ -34,13 +39,28 @@ export const ModalShell = ({
   description,
   children,
   footer,
+  snapPoints,
+  activeSnapPoint,
+  closeThreshold,
+  contentClassName,
 }: ModalShellProps) => {
   const isMobile = useMediaQuery("(max-width: 640px)")
 
   if (isMobile) {
     return (
-      <Drawer open={open} onOpenChange={onOpenChange}>
-        <DrawerContent className="inset-x-0 bottom-0 top-auto max-h-[85vh] w-full rounded-t-2xl rounded-b-none border-t p-6 pt-4 pb-[env(safe-area-inset-bottom)] overflow-y-auto">
+      <Drawer
+        open={open}
+        onOpenChange={onOpenChange}
+        snapPoints={snapPoints}
+        activeSnapPoint={activeSnapPoint}
+        closeThreshold={closeThreshold}
+      >
+        <DrawerContent
+          className={cn(
+            "inset-x-0 bottom-0 top-auto max-h-[85vh] w-full rounded-t-2xl rounded-b-none border-t p-6 pt-4 pb-[env(safe-area-inset-bottom)] overflow-y-auto",
+            contentClassName
+          )}
+        >
           <div
             className="mx-auto mb-4 h-1.5 w-10 rounded-full bg-muted-foreground/20"
             aria-hidden="true"

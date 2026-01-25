@@ -4,5 +4,9 @@
     "languageLabel": "Language",
     "languageSelect": "Select language"
   },
+  "actions": {
+    "signOut": "Sign out",
+    "newExpense": "New expense"
+  },
   "underConstruction": "Under construction."
 }

@@ -33,12 +33,12 @@ const NAV_ITEMS: NavItem[] = [
 ]
 
 const TITLE_BY_PATH = {
-  "/": "Inicio",
-  "/movimientos": "Movimientos",
-  "/objetivos": "Objetivos",
-  "/metricas": "Métricas",
-  "/asesor": "Asesor IA",
-  "/settings": "Configuración",
+  "/": "nav:home",
+  "/movimientos": "nav:movements",
+  "/objetivos": "nav:objectives",
+  "/metricas": "nav:metrics",
+  "/asesor": "nav:advisor",
+  "/settings": "common:settings.title",
 } as const
 
 const FAB_PATH_PREFIXES = [
@@ -50,12 +50,16 @@ const FAB_PATH_PREFIXES = [
 ] as const
 
 export const AppShell = () => {
-  const { t } = useTranslation("nav")
+  const { t } = useTranslation()
   const { pathname } = useLocation()
   const { isLoading, signOut } = useSignOut()
   const [isNewExpenseOpen, setIsNewExpenseOpen] = useState(false)
 
-  const title = TITLE_BY_PATH[pathname as keyof typeof TITLE_BY_PATH] ?? "FinCore"
+  const titleKey = TITLE_BY_PATH[pathname as keyof typeof TITLE_BY_PATH]
+  const title = titleKey ? t(titleKey) : t("nav:home")
+  const settingsLabel = t("common:settings.title")
+  const signOutLabel = t("common:actions.signOut")
+  const newExpenseLabel = t("common:actions.newExpense")
   const showFab = useMemo(() => {
     return FAB_PATH_PREFIXES.some((prefix) =>
       prefix === "/" ? pathname === "/" : pathname.startsWith(prefix)
@@ -79,20 +83,20 @@ export const AppShell = () => {
             className="h-8 w-8 justify-self-start sm:h-9 sm:w-9"
             size="icon"
             variant="ghost"
-            aria-label="Configuración"
-            title="Configuración"
+            aria-label={settingsLabel}
+            title={settingsLabel}
           >
             <Link to="/settings">
               <Settings className="h-4 w-4" />
-              <span className="sr-only">Configuración</span>
+              <span className="sr-only">{settingsLabel}</span>
             </Link>
           </Button>
           <h1 className="justify-self-center text-center text-sm font-semibold sm:text-base">
             {title}
           </h1>
           <Button
-            aria-label={isLoading ? "Cerrando sesión" : "Cerrar sesión"}
-            title={isLoading ? "Cerrando sesión" : "Cerrar sesión"}
+            aria-label={signOutLabel}
+            title={signOutLabel}
             disabled={isLoading}
             onClick={handleSignOut}
             className="h-8 w-8 justify-self-end sm:h-9 sm:w-9"
@@ -101,7 +105,7 @@ export const AppShell = () => {
             variant="ghost"
           >
             <LogOut className="h-4 w-4" />
-            <span className="sr-only">Cerrar sesión</span>
+            <span className="sr-only">{signOutLabel}</span>
           </Button>
         </div>
       </header>
@@ -112,13 +116,13 @@ export const AppShell = () => {
 
       {showFab ? (
         <Button
-          aria-label="Nuevo gasto"
+          aria-label={newExpenseLabel}
           className="fixed bottom-20 right-4 z-30 h-12 w-12 rounded-full shadow-lg"
           onClick={handleFabClick}
           variant="default"
         >
           <Plus className="h-5 w-5" />
-          <span className="sr-only">Nuevo gasto</span>
+          <span className="sr-only">{newExpenseLabel}</span>
         </Button>
       ) : null}
 
@@ -130,7 +134,7 @@ export const AppShell = () => {
       <nav className="fixed bottom-0 left-0 right-0 border-t bg-background/95 backdrop-blur">
         <div className="mx-auto grid w-full max-w-4xl grid-cols-5 gap-1 px-2 py-1.5">
           {NAV_ITEMS.map(({ to, labelKey, Icon, end }) => {
-            const label = t(labelKey)
+            const label = t(`nav:${labelKey}`)
 
             return (
               <NavLink

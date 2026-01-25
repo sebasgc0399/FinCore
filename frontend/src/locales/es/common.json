@@ -1,8 +1,12 @@
-{
+﻿{
   "settings": {
     "title": "Configuración",
     "languageLabel": "Idioma",
     "languageSelect": "Seleccionar idioma"
+  },
+  "actions": {
+    "signOut": "Cerrar sesión",
+    "newExpense": "Nuevo gasto"
   },
   "underConstruction": "En construcción."
 }

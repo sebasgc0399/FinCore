@@ -12,6 +12,7 @@ clean architecture, and a consistent user experience.
 - Backend: Firebase v9 (Modular SDK), Firestore, Cloud Functions, Hosting
 - State: React Context + Hooks (keep it simple)
 - Date handling: date-fns
+- i18n: i18next + react-i18next + i18next-browser-languagedetector
 
 ## Core Pillars
 1. Mobile-first: every UI is responsive and touch friendly.
@@ -90,6 +91,8 @@ Rules:
 - Never access Firestore directly from UI components.
 - Use `try/catch` for all async calls and surface errors to the UI.
 - Prefer server timestamps and strongly typed models.
+- Auth: use Google `signInWithPopup` only; do not reintroduce redirect flows.
+- Keep authDomain resolution in `src/lib/firebase` (do not bypass `resolveAuthDomain`).
 
 ## Styling and UI (Tailwind + shadcn/ui)
 - Use Tailwind classes; avoid custom CSS unless needed.
@@ -104,6 +107,18 @@ Rules:
 - Create feature-specific wrappers in `src/components` or `src/features/<feature>/components`.
 - Use `cva` for variants; keep variant names short and consistent.
 - Use Radix primitives as designed; do not break accessibility contracts.
+
+## Internationalization (i18n)
+- All user-facing text must come from i18n keys; avoid hardcoded strings in UI.
+- Translations live in `src/locales/<lang>/<namespace>.json` (feature-based namespaces).
+- Keep JSON files in UTF-8 to avoid mojibake; fix encoding at the source.
+- Use `i18n.language` and `src/lib/formatters.ts` for currency/date formatting.
+- Language preference uses `localStorage` key `fincore_lang` with browser fallback.
+
+## Modals and Sheets
+- Use `ModalShell` for standard modals (Drawer on mobile, Dialog on desktop).
+- Only bypass `ModalShell` for truly unique UX; document the reason in code.
+- When using `ModalShell`, configure optional Drawer props (snapPoints, etc.) instead of custom wrappers.
 
 ## Naming Conventions
 - Components: `PascalCase` (e.g., `LoginForm.tsx`)

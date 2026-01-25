@@ -1,5 +1,6 @@
-﻿import { Link, Navigate } from "react-router-dom"
+﻿import { Link } from "react-router-dom"
 
+import { isIOSSafari } from "@/lib/isIOSSafari"
 import { useAuth } from "@/features/auth/hooks/useAuth"
 import { useGoogleSignIn } from "@/features/auth/hooks/useGoogleSignIn"
 
@@ -13,16 +14,18 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 
-export const LoginPage = (): JSX.Element => {
-  const { user } = useAuth()
+export const LoginPage = () => {
+  const { error, setError } = useAuth()
   const { errorMessage, isLoading, signIn } = useGoogleSignIn()
+  const hasLoginError = Boolean(error || errorMessage)
+  const showIOSSafariHint = isIOSSafari() && hasLoginError
 
   const handleGoogleSignIn = (): void => {
-    void signIn()
-  }
+    if (error) {
+      setError(null)
+    }
 
-  if (user) {
-    return <Navigate replace to="/" />
+    void signIn()
   }
 
   return (
@@ -57,9 +60,20 @@ export const LoginPage = (): JSX.Element => {
             </span>
             {isLoading ? "Conectando..." : "Continuar con Google"}
           </Button>
+          {error ? (
+            <p className="text-sm text-destructive" role="alert">
+              {error}
+            </p>
+          ) : null}
           {errorMessage ? (
             <p className="text-sm text-destructive" role="alert">
               {errorMessage}
+            </p>
+          ) : null}
+          {showIOSSafariHint ? (
+            <p className="text-sm text-muted-foreground">
+              En iOS Safari, si se bloquean popups, prueba desactivar modo
+              privado o habilitar ventanas emergentes.
             </p>
           ) : null}
         </CardContent>

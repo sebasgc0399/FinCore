@@ -1,9 +1,9 @@
-import { useAuth } from "@/features/auth/hooks/useAuth"
+﻿import { useAuth } from "@/features/auth/hooks/useAuth"
 import { useSignOut } from "@/features/auth/hooks/useSignOut"
 
 import { Button } from "@/components/ui/button"
 
-export const DashboardPage = (): JSX.Element => {
+export const DashboardPage = () => {
   const { user } = useAuth()
   const { errorMessage, isLoading, signOut } = useSignOut()
 
@@ -32,3 +32,4 @@ export const DashboardPage = (): JSX.Element => {
     </main>
   )
 }
+

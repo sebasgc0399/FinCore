@@ -3,13 +3,11 @@ import { Navigate } from "react-router-dom"
 
 import { useAuth } from "@/features/auth/hooks/useAuth"
 
-type ProtectedRouteProps = {
+type PublicRouteProps = {
   children: ReactNode
 }
 
-export const ProtectedRoute = ({
-  children,
-}: ProtectedRouteProps) => {
+export const PublicRoute = ({ children }: PublicRouteProps) => {
   const { loading, user } = useAuth()
 
   if (loading) {
@@ -22,10 +20,9 @@ export const ProtectedRoute = ({
     )
   }
 
-  if (!user) {
-    return <Navigate replace to="/login" />
+  if (user) {
+    return <Navigate replace to="/" />
   }
 
   return <>{children}</>
 }
-

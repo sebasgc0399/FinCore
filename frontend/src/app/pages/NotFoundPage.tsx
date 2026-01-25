@@ -1,6 +1,6 @@
-import { Link } from "react-router-dom"
+﻿import { Link } from "react-router-dom"
 
-export const NotFoundPage = (): JSX.Element => {
+export const NotFoundPage = () => {
   return (
     <main className="min-h-screen px-4 py-10">
       <div className="mx-auto w-full max-w-3xl space-y-4">
@@ -15,3 +15,4 @@ export const NotFoundPage = (): JSX.Element => {
     </main>
   )
 }
+

@@ -1,18 +1,38 @@
-import { createContext, useCallback, useEffect, useMemo, useState } from "react"
+﻿import { createContext, useCallback, useEffect, useMemo, useState } from "react"
 
 import type { ReactNode } from "react"
 
+import { useMediaQuery } from "@/hooks/useMediaQuery"
+
 type Theme = "light" | "dark"
 
+type ThemeMode = "system" | "manual"
+
 type ThemeContextValue = {
+  themeMode: ThemeMode
+  setThemeMode: (mode: ThemeMode) => void
   theme: Theme
   toggleTheme: () => void
+  effectiveTheme: Theme
 }
 
 export const ThemeContext = createContext<ThemeContextValue | null>(null)
 
 type ThemeProviderProps = {
   children: ReactNode
+}
+
+const getInitialThemeMode = (): ThemeMode => {
+  if (typeof window === "undefined") {
+    return "system"
+  }
+
+  const storedMode = localStorage.getItem("fincore_theme_mode")
+  if (storedMode === "system" || storedMode === "manual") {
+    return storedMode
+  }
+
+  return "system"
 }
 
 const getInitialTheme = (): Theme => {
@@ -30,24 +50,45 @@ const getInitialTheme = (): Theme => {
 }
 
 export const ThemeProvider = ({ children }: ThemeProviderProps) => {
+  const prefersDark = useMediaQuery("(prefers-color-scheme: dark)")
+  const systemTheme: Theme = prefersDark ? "dark" : "light"
+  const [themeMode, setThemeMode] = useState<ThemeMode>(getInitialThemeMode)
   const [theme, setTheme] = useState<Theme>(getInitialTheme)
 
+  const effectiveTheme = themeMode === "system" ? systemTheme : theme
+
   const toggleTheme = useCallback(() => {
-    setTheme((current) => (current === "dark" ? "light" : "dark"))
-  }, [])
+    setThemeMode("manual")
+    setTheme((current) => {
+      const baseTheme = themeMode === "system" ? effectiveTheme : current
+      return baseTheme === "dark" ? "light" : "dark"
+    })
+  }, [effectiveTheme, themeMode])
 
   useEffect(() => {
-    document.documentElement.classList.toggle("dark", theme === "dark")
-    document.documentElement.style.colorScheme = theme
-    localStorage.setItem("fincore_theme", theme)
-  }, [theme])
+    document.documentElement.classList.toggle("dark", effectiveTheme === "dark")
+    document.documentElement.style.colorScheme = effectiveTheme
+  }, [effectiveTheme])
+
+  useEffect(() => {
+    localStorage.setItem("fincore_theme_mode", themeMode)
+  }, [themeMode])
+
+  useEffect(() => {
+    if (themeMode === "manual") {
+      localStorage.setItem("fincore_theme", theme)
+    }
+  }, [themeMode, theme])
 
   const value = useMemo(
     () => ({
+      themeMode,
+      setThemeMode,
       theme,
       toggleTheme,
+      effectiveTheme,
     }),
-    [theme, toggleTheme]
+    [themeMode, theme, toggleTheme, effectiveTheme]
   )
 
   return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>

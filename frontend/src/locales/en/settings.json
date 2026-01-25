@@ -38,7 +38,9 @@
       "toggleLabel": "Theme",
       "toggleHint": "Choose light or dark mode.",
       "toggleAriaOn": "Switch to light mode",
-      "toggleAriaOff": "Switch to dark mode"
+      "toggleAriaOff": "Switch to dark mode",
+      "systemLabel": "Use system theme",
+      "systemHint": "Follows your device preference."
     },
     "language": {
       "title": "Language",

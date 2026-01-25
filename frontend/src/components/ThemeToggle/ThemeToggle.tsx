@@ -8,8 +8,9 @@ import "./ThemeToggle.css"
 export const ThemeToggle = () => {
   // Credit: Pixel Art Theme Switcher by Jamie Wilson.
   const { t } = useTranslation("settings")
-  const { theme, toggleTheme } = useTheme()
-  const isDark = theme === "dark"
+  const { themeMode, toggleTheme, effectiveTheme } = useTheme()
+  const isDark = effectiveTheme === "dark"
+  const isDisabled = themeMode === "system"
 
   const ariaLabel = isDark
     ? t("account.appearance.toggleAriaOn")
@@ -20,7 +21,12 @@ export const ThemeToggle = () => {
       <button
         aria-label={ariaLabel}
         aria-pressed={isDark}
-        className={cn("theme-switcher-grid", isDark && "night-theme")}
+        className={cn(
+          "theme-switcher-grid",
+          isDark && "night-theme",
+          isDisabled && "theme-switcher-disabled"
+        )}
+        disabled={isDisabled}
         onClick={toggleTheme}
         type="button"
       >

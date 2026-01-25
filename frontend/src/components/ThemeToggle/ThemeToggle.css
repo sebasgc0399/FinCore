@@ -169,6 +169,12 @@
   box-shadow: 0 0 0 4px rgba(250, 188, 28, 0.3);
 }
 
+.fincore-theme-toggle .theme-switcher-grid:disabled,
+.fincore-theme-toggle .theme-switcher-grid.theme-switcher-disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
 .fincore-theme-toggle.theme-toggle-wrapper {
   transform: scale(1.2);
 }

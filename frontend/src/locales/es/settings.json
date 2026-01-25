@@ -38,7 +38,9 @@
       "toggleLabel": "Tema",
       "toggleHint": "Selecciona modo claro u oscuro.",
       "toggleAriaOn": "Cambiar a modo claro",
-      "toggleAriaOff": "Cambiar a modo oscuro"
+      "toggleAriaOff": "Cambiar a modo oscuro",
+      "systemLabel": "Usar tema del sistema",
+      "systemHint": "Se ajusta automáticamente a tu dispositivo."
     },
     "language": {
       "title": "Idioma",

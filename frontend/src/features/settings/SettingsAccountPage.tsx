@@ -10,15 +10,25 @@ import {
 } from "@/components/ui/card"
 import { ThemeToggle } from "@/components/ThemeToggle/ThemeToggle"
 import { Label } from "@/components/ui/label"
+import { Switch } from "@/components/ui/switch"
+import { useTheme } from "@/hooks/useTheme"
 
 export const SettingsAccountPage = () => {
   const { t, i18n } = useTranslation("settings")
+  const { themeMode, setThemeMode } = useTheme()
   const currentLanguage = i18n.language?.startsWith("en") ? "en" : "es"
+  const isSystemMode = themeMode === "system"
+  const systemSwitchId = "system-theme-switch"
+  const systemHintId = "system-theme-hint"
 
   const handleLanguageChange = (event: ChangeEvent<HTMLSelectElement>): void => {
     const nextLanguage = event.target.value === "en" ? "en" : "es"
     localStorage.setItem("fincore_lang", nextLanguage)
     void i18n.changeLanguage(nextLanguage)
+  }
+
+  const handleSystemThemeChange = (checked: boolean): void => {
+    setThemeMode(checked ? "system" : "manual")
   }
 
   return (
@@ -33,16 +43,39 @@ export const SettingsAccountPage = () => {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="flex items-center justify-between gap-4">
-            <div className="space-y-1">
-              <p className="text-sm font-medium">
-                {t("settings:account.appearance.toggleLabel")}
-              </p>
-              <p className="text-xs text-muted-foreground">
-                {t("settings:account.appearance.toggleHint")}
-              </p>
+          <div className="space-y-4">
+            <div className="flex items-center justify-between gap-4">
+              <div className="space-y-1">
+                <p className="text-sm font-medium">
+                  {t("settings:account.appearance.toggleLabel")}
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  {t("settings:account.appearance.toggleHint")}
+                </p>
+              </div>
+              <ThemeToggle />
             </div>
-            <ThemeToggle />
+            <div className="space-y-1">
+              <div className="flex items-center justify-between gap-4">
+                <div className="space-y-1">
+                  <Label className="text-sm font-medium" htmlFor={systemSwitchId}>
+                    {t("settings:account.appearance.systemLabel")}
+                  </Label>
+                  <p
+                    className="text-xs text-muted-foreground"
+                    id={systemHintId}
+                  >
+                    {t("settings:account.appearance.systemHint")}
+                  </p>
+                </div>
+                <Switch
+                  aria-describedby={systemHintId}
+                  checked={isSystemMode}
+                  id={systemSwitchId}
+                  onCheckedChange={handleSystemThemeChange}
+                />
+              </div>
+            </div>
           </div>
         </CardContent>
       </Card>

@@ -2,18 +2,150 @@ rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
+    function isSignedIn() {
+      return request.auth != null;
+    }
 
-    // This rule allows anyone with your Firestore database reference to view, edit,
-    // and delete all data in your Firestore database. It is useful for getting
-    // started, but it is configured to expire after 30 days because it
-    // leaves your app open to attackers. At that time, all client
-    // requests to your Firestore database will be denied.
-    //
-    // Make sure to write security rules for your app before that time, or else
-    // all client requests to your Firestore database will be denied until you Update
-    // your rules
+    function isOwner(uid) {
+      return isSignedIn() && request.auth.uid == uid;
+    }
+
+    function isAdmin() {
+      return isSignedIn() && request.auth.token.admin == true;
+    }
+
+    function userIdMatchesRequest() {
+      return request.resource.data.userId == request.auth.uid;
+    }
+
+    function userIdUnchanged() {
+      return request.resource.data.userId == resource.data.userId;
+    }
+
+    function userDocKeysValid() {
+      return request.resource.data.keys().hasOnly([
+        "profile",
+        "preferences",
+        "auth",
+        "metadata"
+      ]);
+    }
+
+    function userAuthCreateValid() {
+      return request.resource.data.auth.role == "free"
+        && request.resource.data.auth.openaiKeyStored == false
+        && request.resource.data.auth.subscription.status == "expired"
+        && request.resource.data.auth.subscription.source == "manual";
+    }
+
+    function userAuthUnchanged() {
+      return request.resource.data.auth == resource.data.auth;
+    }
+
+    match /system_categories/{categoryId} {
+      allow read: if isSignedIn();
+      allow write: if false;
+    }
+
+    match /users/{uid} {
+      allow read: if isOwner(uid) || isAdmin();
+
+      allow create: if isOwner(uid)
+        && userDocKeysValid()
+        && userAuthCreateValid();
+
+      allow update: if isOwner(uid)
+        && userDocKeysValid()
+        && userAuthUnchanged();
+
+      allow delete: if false;
+
+      match /custom_categories/{categoryId} {
+        allow read: if isOwner(uid);
+        allow create, update: if isOwner(uid)
+          && request.resource.data.label is string
+          && request.resource.data.icon is string
+          && request.resource.data.kind in ["expense", "income"];
+        allow delete: if isOwner(uid);
+      }
+
+      match /advisorChats/{sessionId} {
+        allow read, write: if isOwner(uid);
+
+        match /messages/{messageId} {
+          allow read, write: if isOwner(uid);
+        }
+      }
+
+      match /advisor_sessions/{sessionId} {
+        allow read, write: if isOwner(uid);
+
+        match /messages/{messageId} {
+          allow read, write: if isOwner(uid);
+        }
+      }
+    }
+
+    match /transactions/{transactionId} {
+      allow read: if isSignedIn() && resource.data.userId == request.auth.uid;
+      allow create: if isSignedIn() && userIdMatchesRequest();
+      allow update: if isSignedIn() && userIdUnchanged();
+      allow delete: if isSignedIn() && resource.data.userId == request.auth.uid;
+    }
+
+    match /templates/{templateId} {
+      allow read: if isSignedIn() && resource.data.userId == request.auth.uid;
+      allow create: if isSignedIn() && userIdMatchesRequest();
+      allow update: if isSignedIn() && userIdUnchanged();
+      allow delete: if isSignedIn() && resource.data.userId == request.auth.uid;
+    }
+
+    match /budgets/{budgetId} {
+      allow read: if isSignedIn() && resource.data.userId == request.auth.uid;
+      allow create: if isSignedIn() && userIdMatchesRequest();
+      allow update: if isSignedIn() && userIdUnchanged();
+      allow delete: if isSignedIn() && resource.data.userId == request.auth.uid;
+    }
+
+    match /objectives/{objectiveId} {
+      allow read: if isSignedIn() && resource.data.userId == request.auth.uid;
+      allow create: if isSignedIn() && userIdMatchesRequest();
+      allow update: if isSignedIn() && userIdUnchanged();
+      allow delete: if isSignedIn() && resource.data.userId == request.auth.uid;
+
+      match /entries/{entryId} {
+        allow read: if isSignedIn()
+          && get(/databases/$(database)/documents/objectives/$(objectiveId)).data.userId == request.auth.uid;
+        allow create, update: if isSignedIn()
+          && userIdMatchesRequest()
+          && get(/databases/$(database)/documents/objectives/$(objectiveId)).data.userId == request.auth.uid;
+        allow delete: if isSignedIn()
+          && get(/databases/$(database)/documents/objectives/$(objectiveId)).data.userId == request.auth.uid;
+      }
+    }
+
+    match /usage/{uid} {
+      allow read: if isOwner(uid) || isAdmin();
+      allow write: if false;
+    }
+
+    match /advisorFreeChatUsage/{uid} {
+      allow read: if isOwner(uid) || isAdmin();
+      allow write: if false;
+    }
+
+    match /importTransactionsUsage/{uid} {
+      allow read: if isOwner(uid) || isAdmin();
+      allow write: if false;
+    }
+
+    match /payments/{paymentId} {
+      allow read: if isSignedIn() && (resource.data.uid == request.auth.uid || isAdmin());
+      allow write: if false;
+    }
+
     match /{document=**} {
-      allow read, write: if request.time < timestamp.date(2026, 2, 23);
+      allow read, write: if false;
     }
   }
 }

@@ -2,6 +2,7 @@
 import { onAuthStateChanged, type User } from "firebase/auth"
 
 import { auth } from "@/lib/firebase"
+import { bootstrapUser } from "@/features/auth/services/userBootstrap"
 
 type AuthContextValue = {
   user: User | null
@@ -15,6 +16,14 @@ type AuthProviderProps = {
 }
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined)
+
+const getErrorMessage = (error: unknown): string => {
+  if (error instanceof Error && error.message.trim() !== "") {
+    return error.message
+  }
+
+  return "No pudimos preparar tu cuenta. Intenta de nuevo."
+}
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [user, setUser] = useState<User | null>(null)
@@ -60,6 +69,31 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       unsubscribe()
     }
   }, [])
+
+  useEffect(() => {
+    if (!user) {
+      return
+    }
+
+    let isMounted = true
+
+    const runBootstrap = async () => {
+      try {
+        await bootstrapUser(user)
+      } catch (bootstrapError: unknown) {
+        if (!isMounted) {
+          return
+        }
+        setError(getErrorMessage(bootstrapError))
+      }
+    }
+
+    void runBootstrap()
+
+    return () => {
+      isMounted = false
+    }
+  }, [user, setError])
 
   return (
     <AuthContext.Provider value={{ user, loading, error, setError }}>

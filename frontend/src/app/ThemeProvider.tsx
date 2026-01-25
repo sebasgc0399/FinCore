@@ -42,15 +42,28 @@ export const ThemeProvider = ({ children }: ThemeProviderProps) => {
   const [themeMode, setThemeMode] = useState<ThemeMode>(getInitialThemeMode)
   const [theme, setTheme] = useState<Theme>(getInitialTheme)
 
-  const effectiveTheme = themeMode === "system" ? systemTheme : theme
+  const effectiveTheme = themeMode === "manual" ? theme : systemTheme
+
+  const setThemeModeWithSync = useCallback(
+    (nextMode: ThemeMode) => {
+      setThemeMode((currentMode) => {
+        if (currentMode === "system" && nextMode === "manual") {
+          setTheme(systemTheme)
+        }
+
+        return nextMode
+      })
+    },
+    [systemTheme]
+  )
 
   const toggleTheme = useCallback(() => {
-    setThemeMode("manual")
+    setThemeModeWithSync("manual")
     setTheme((current) => {
-      const baseTheme = themeMode === "system" ? effectiveTheme : current
+      const baseTheme = themeMode === "manual" ? current : systemTheme
       return baseTheme === "dark" ? "light" : "dark"
     })
-  }, [effectiveTheme, themeMode])
+  }, [setThemeModeWithSync, systemTheme, themeMode])
 
   useEffect(() => {
     const root = document.documentElement
@@ -90,12 +103,12 @@ export const ThemeProvider = ({ children }: ThemeProviderProps) => {
   const value = useMemo(
     () => ({
       themeMode,
-      setThemeMode,
+      setThemeMode: setThemeModeWithSync,
       theme,
       toggleTheme,
       effectiveTheme,
     }),
-    [themeMode, theme, toggleTheme, effectiveTheme]
+    [themeMode, setThemeModeWithSync, theme, toggleTheme, effectiveTheme]
   )
 
   return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>

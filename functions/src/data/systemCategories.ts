@@ -13,4 +13,4 @@ export const systemCategories = [
     kind: "income",
     order: 1,
   },
-] as const
+] as const;

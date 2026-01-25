@@ -1,32 +1,32 @@
-import { initializeApp } from "firebase-admin/app"
-import { getFirestore } from "firebase-admin/firestore"
-import { HttpsError, onCall } from "firebase-functions/v2/https"
+import {initializeApp} from "firebase-admin/app";
+import {getFirestore} from "firebase-admin/firestore";
+import {HttpsError, onCall} from "firebase-functions/v2/https";
 
-import { systemCategories } from "./data/systemCategories"
+import {systemCategories} from "./data/systemCategories";
 
-initializeApp()
+initializeApp();
 
-const db = getFirestore()
+const db = getFirestore();
 
 export const seedSystemCategories = onCall(async (request) => {
   if (request.auth?.token?.admin !== true) {
-    throw new HttpsError("permission-denied", "Admin permissions required.")
+    throw new HttpsError("permission-denied", "Admin permissions required.");
   }
 
-  const categoriesRef = db.collection("system_categories")
-  const existingSnapshot = await categoriesRef.limit(1).get()
+  const categoriesRef = db.collection("system_categories");
+  const existingSnapshot = await categoriesRef.limit(1).get();
 
   if (!existingSnapshot.empty) {
-    return { status: "skipped" }
+    return {status: "skipped"};
   }
 
-  const batch = db.batch()
+  const batch = db.batch();
 
   systemCategories.forEach((category) => {
-    batch.set(categoriesRef.doc(category.id), category)
-  })
+    batch.set(categoriesRef.doc(category.id), category);
+  });
 
-  await batch.commit()
+  await batch.commit();
 
-  return { status: "seeded", count: systemCategories.length }
-})
+  return {status: "seeded", count: systemCategories.length};
+});

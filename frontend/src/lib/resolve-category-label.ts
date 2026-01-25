@@ -9,8 +9,19 @@ export const resolveCategoryLabel = (
   t: TFunction
 ): string => {
   if ("labelKey" in category && category.labelKey) {
-    return t(category.labelKey)
+    if (category.labelKey.includes(":")) {
+      return t(category.labelKey)
+    }
+
+    return t(category.labelKey, {
+      ns: "common",
+      defaultValue: category.labelKey,
+    })
   }
 
-  return category.label ?? ("labelKey" in category ? category.labelKey : "") ?? ""
+  if ("label" in category) {
+    return category.label ?? ""
+  }
+
+  return ""
 }

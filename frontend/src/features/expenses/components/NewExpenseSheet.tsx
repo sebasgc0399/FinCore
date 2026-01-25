@@ -25,8 +25,10 @@ export const NewExpenseSheet = ({
     handleOpenChange(false)
   }
 
-  const handleSnapPointChange = (nextSnapPoint: number | null): void => {
-    if (nextSnapPoint !== null) {
+  const handleSnapPointChange = (
+    nextSnapPoint: number | string | null
+  ): void => {
+    if (typeof nextSnapPoint === "number") {
       setSnapPoint(nextSnapPoint)
     }
   }
@@ -39,7 +41,7 @@ export const NewExpenseSheet = ({
       description="En construcción."
       snapPoints={[0.5, 0.9]}
       activeSnapPoint={snapPoint}
-      onSnapPointChange={handleSnapPointChange}
+      setActiveSnapPoint={handleSnapPointChange}
       closeThreshold={0.2}
       footer={
         <Button type="button" variant="secondary" onClick={handleClose}>

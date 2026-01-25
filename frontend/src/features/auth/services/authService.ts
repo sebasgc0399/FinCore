@@ -22,8 +22,10 @@ const getErrorCode = (error: unknown): string | null => {
 }
 
 export const signInWithGoogle = async (): Promise<void> => {
-  const fallbackMessage = "No pudimos iniciar sesion con Google. Intenta de nuevo."
-  const popupErrorMessage = "Activa ventanas emergentes e intenta de nuevo"
+  const fallbackMessage =
+    "No pudimos iniciar sesión con Google. Intenta de nuevo."
+  const popupErrorMessage =
+    "Habilita ventanas emergentes e inténtalo de nuevo."
 
   try {
     await signInWithPopup(auth, googleProvider)
@@ -49,6 +51,6 @@ export const signOutUser = async (): Promise<void> => {
       throw error
     }
 
-    throw new Error("No pudimos cerrar sesion. Intenta de nuevo.")
+    throw new Error("No pudimos cerrar sesión. Intenta de nuevo.")
   }
 }

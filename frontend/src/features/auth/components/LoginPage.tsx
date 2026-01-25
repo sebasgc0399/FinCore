@@ -17,7 +17,8 @@ import {
 export const LoginPage = () => {
   const { error, setError } = useAuth()
   const { errorMessage, isLoading, signIn } = useGoogleSignIn()
-  const hasLoginError = Boolean(error || errorMessage)
+  const primaryError = errorMessage ?? error ?? null
+  const hasLoginError = Boolean(primaryError)
   const showIOSSafariHint = isIOSSafari() && hasLoginError
 
   const handleGoogleSignIn = (): void => {
@@ -38,13 +39,16 @@ export const LoginPage = () => {
             </div>
             <div className="space-y-1">
               <CardTitle className="text-2xl">FinCore</CardTitle>
-              <CardDescription>Inicia sesión para continuar</CardDescription>
+              <CardDescription>
+                Accede con tu cuenta de Google para continuar.
+              </CardDescription>
             </div>
           </div>
         </CardHeader>
         <CardContent className="space-y-4">
           <p className="text-sm text-muted-foreground">
-            Gestiona tu dinero con claridad y control desde cualquier lugar.
+            Controla gastos, presupuestos y metas con claridad, estés donde
+            estés.
           </p>
           <Button
             className="w-full"
@@ -60,20 +64,15 @@ export const LoginPage = () => {
             </span>
             {isLoading ? "Conectando..." : "Continuar con Google"}
           </Button>
-          {error ? (
+          {primaryError ? (
             <p className="text-sm text-destructive" role="alert">
-              {error}
-            </p>
-          ) : null}
-          {errorMessage ? (
-            <p className="text-sm text-destructive" role="alert">
-              {errorMessage}
+              {primaryError}
             </p>
           ) : null}
           {showIOSSafariHint ? (
             <p className="text-sm text-muted-foreground">
-              En iOS Safari, si se bloquean popups, prueba desactivar modo
-              privado o habilitar ventanas emergentes.
+              En Safari iOS, los popups pueden bloquearse. Desactiva modo
+              privado o habilita ventanas emergentes.
             </p>
           ) : null}
         </CardContent>

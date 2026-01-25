@@ -1,8 +1,14 @@
 ﻿import { BrowserRouter, Route, Routes } from "react-router-dom"
 
-import { DashboardPage } from "@/app/pages/DashboardPage"
+import { AppShell } from "@/app/layouts/AppShell"
+import { AdvisorPage } from "@/app/pages/AdvisorPage"
+import { HomePage } from "@/app/pages/HomePage"
+import { MetricsPage } from "@/app/pages/MetricsPage"
+import { MovementsPage } from "@/app/pages/MovementsPage"
 import { NotFoundPage } from "@/app/pages/NotFoundPage"
+import { ObjectivesPage } from "@/app/pages/ObjectivesPage"
 import { PrivacyPage } from "@/app/pages/PrivacyPage"
+import { SettingsPage } from "@/app/pages/SettingsPage"
 import { TermsPage } from "@/app/pages/TermsPage"
 import { PublicRoute } from "@/features/auth/components/PublicRoute"
 import { ProtectedRoute } from "@/features/auth/components/ProtectedRoute"
@@ -15,11 +21,17 @@ export const AppRouter = () => {
         <Route
           element={
             <ProtectedRoute>
-              <DashboardPage />
+              <AppShell />
             </ProtectedRoute>
           }
-          path="/"
-        />
+        >
+          <Route element={<HomePage />} index />
+          <Route element={<MovementsPage />} path="movimientos" />
+          <Route element={<ObjectivesPage />} path="objetivos" />
+          <Route element={<MetricsPage />} path="metricas" />
+          <Route element={<AdvisorPage />} path="asesor" />
+          <Route element={<SettingsPage />} path="settings" />
+        </Route>
         <Route
           element={
             <PublicRoute>
@@ -35,4 +47,3 @@ export const AppRouter = () => {
     </BrowserRouter>
   )
 }
-

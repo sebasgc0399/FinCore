@@ -1,6 +1,6 @@
-﻿import { Link, NavLink, Outlet, useLocation } from "react-router-dom"
-import { useMemo, useState } from "react"
+﻿import { useMemo, useState } from "react"
 import { useTranslation } from "react-i18next"
+import { Link, NavLink, Outlet, useLocation } from "react-router-dom"
 import {
   BarChart3,
   Home,
@@ -38,7 +38,12 @@ const TITLE_BY_PATH = {
   "/objetivos": "nav:objectives",
   "/metricas": "nav:metrics",
   "/asesor": "nav:advisor",
-  "/settings": "common:settings.title",
+  "/settings": "settings:titles.home",
+  "/settings/account": "settings:titles.account",
+  "/settings/subscription": "settings:titles.subscription",
+  "/settings/support": "settings:titles.support",
+  "/settings/legal": "settings:titles.legal",
+  "/settings/admin": "settings:titles.admin",
 } as const
 
 const FAB_PATH_PREFIXES = [
@@ -55,16 +60,22 @@ export const AppShell = () => {
   const { isLoading, signOut } = useSignOut()
   const [isNewExpenseOpen, setIsNewExpenseOpen] = useState(false)
 
-  const titleKey = TITLE_BY_PATH[pathname as keyof typeof TITLE_BY_PATH]
-  const title = titleKey ? t(titleKey) : t("nav:home")
-  const settingsLabel = t("common:settings.title")
+  const normalizedPath =
+    pathname !== "/" && pathname.endsWith("/")
+      ? pathname.slice(0, -1)
+      : pathname
+  const titleKey = TITLE_BY_PATH[normalizedPath as keyof typeof TITLE_BY_PATH]
+  const title = titleKey ? t(titleKey) : t("common:appName")
+  const settingsLabel = t("settings:titles.home")
   const signOutLabel = t("common:actions.signOut")
   const newExpenseLabel = t("common:actions.newExpense")
   const showFab = useMemo(() => {
     return FAB_PATH_PREFIXES.some((prefix) =>
-      prefix === "/" ? pathname === "/" : pathname.startsWith(prefix)
+      prefix === "/"
+        ? normalizedPath === "/"
+        : normalizedPath.startsWith(prefix)
     )
-  }, [pathname])
+  }, [normalizedPath])
 
   const handleSignOut = (): void => {
     void signOut()

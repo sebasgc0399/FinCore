@@ -1,0 +1,76 @@
+{
+  "titles": {
+    "home": "Settings",
+    "account": "Account",
+    "subscription": "Subscriptions",
+    "support": "Support Center",
+    "legal": "Legal",
+    "admin": "Admin"
+  },
+  "home": {
+    "sections": {
+      "account": {
+        "title": "Account",
+        "description": "Appearance and language."
+      },
+      "subscription": {
+        "title": "Subscriptions",
+        "description": "Plans and billing."
+      },
+      "support": {
+        "title": "Support Center",
+        "description": "Send a bug or suggestion."
+      },
+      "legal": {
+        "title": "Legal",
+        "description": "Terms and privacy."
+      },
+      "admin": {
+        "title": "Admin",
+        "description": "Admin-only tools."
+      }
+    }
+  },
+  "account": {
+    "appearance": {
+      "title": "Appearance",
+      "description": "Customize the visual experience."
+    },
+    "language": {
+      "title": "Language",
+      "description": "Choose the app language.",
+      "label": "Language",
+      "select": "Select language",
+      "options": {
+        "es": "Spanish",
+        "en": "English"
+      }
+    }
+  },
+  "subscription": {
+    "description": "Manage your plan and billing."
+  },
+  "support": {
+    "description": "Tell us what happened and how we can help.",
+    "form": {
+      "typeLabel": "Type",
+      "typeOptions": {
+        "bug": "Bug report",
+        "suggestion": "Suggestion"
+      },
+      "subjectLabel": "Subject",
+      "messageLabel": "Message",
+      "emailLabel": "Email (optional)",
+      "submit": "Send",
+      "successTitle": "Thanks",
+      "successMessage": "We received your message. We'll get back to you soon."
+    }
+  },
+  "legal": {
+    "terms": "Terms",
+    "privacy": "Privacy"
+  },
+  "admin": {
+    "description": "Administrative area."
+  }
+}

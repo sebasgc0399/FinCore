@@ -1,4 +1,5 @@
-{
+﻿{
+  "appName": "FinCore",
   "settings": {
     "title": "Settings",
     "languageLabel": "Language",

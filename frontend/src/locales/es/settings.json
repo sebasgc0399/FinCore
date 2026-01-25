@@ -1,0 +1,76 @@
+{
+  "titles": {
+    "home": "Configuración",
+    "account": "Cuenta",
+    "subscription": "Suscripciones",
+    "support": "Centro de contacto",
+    "legal": "Legal",
+    "admin": "Administración"
+  },
+  "home": {
+    "sections": {
+      "account": {
+        "title": "Cuenta",
+        "description": "Apariencia e idioma."
+      },
+      "subscription": {
+        "title": "Suscripciones",
+        "description": "Planes y facturación."
+      },
+      "support": {
+        "title": "Centro de contacto",
+        "description": "Envíanos un bug o sugerencia."
+      },
+      "legal": {
+        "title": "Legal",
+        "description": "Términos y privacidad."
+      },
+      "admin": {
+        "title": "Administración",
+        "description": "Herramientas para administradores."
+      }
+    }
+  },
+  "account": {
+    "appearance": {
+      "title": "Apariencia",
+      "description": "Personaliza la experiencia visual."
+    },
+    "language": {
+      "title": "Idioma",
+      "description": "Elige el idioma de la app.",
+      "label": "Idioma",
+      "select": "Seleccionar idioma",
+      "options": {
+        "es": "Español",
+        "en": "Inglés"
+      }
+    }
+  },
+  "subscription": {
+    "description": "Administra tu plan y pagos."
+  },
+  "support": {
+    "description": "Cuéntanos lo que ocurrió y cómo ayudarte.",
+    "form": {
+      "typeLabel": "Tipo",
+      "typeOptions": {
+        "bug": "Reporte de bug",
+        "suggestion": "Sugerencia"
+      },
+      "subjectLabel": "Asunto",
+      "messageLabel": "Mensaje",
+      "emailLabel": "Email (opcional)",
+      "submit": "Enviar",
+      "successTitle": "Gracias",
+      "successMessage": "Recibimos tu mensaje. Te responderemos pronto."
+    }
+  },
+  "legal": {
+    "terms": "Términos",
+    "privacy": "Privacidad"
+  },
+  "admin": {
+    "description": "Sección administrativa."
+  }
+}

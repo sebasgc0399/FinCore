@@ -1,4 +1,4 @@
-{
+﻿{
   "titles": {
     "home": "Settings",
     "account": "Account",
@@ -34,7 +34,11 @@
   "account": {
     "appearance": {
       "title": "Appearance",
-      "description": "Customize the visual experience."
+      "description": "Customize the visual experience.",
+      "toggleLabel": "Theme",
+      "toggleHint": "Choose light or dark mode.",
+      "toggleAriaOn": "Switch to light mode",
+      "toggleAriaOff": "Switch to dark mode"
     },
     "language": {
       "title": "Language",

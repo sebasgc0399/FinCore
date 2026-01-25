@@ -1,4 +1,4 @@
-{
+﻿{
   "titles": {
     "home": "Configuración",
     "account": "Cuenta",
@@ -34,7 +34,11 @@
   "account": {
     "appearance": {
       "title": "Apariencia",
-      "description": "Personaliza la experiencia visual."
+      "description": "Personaliza la experiencia visual.",
+      "toggleLabel": "Tema",
+      "toggleHint": "Selecciona modo claro u oscuro.",
+      "toggleAriaOn": "Cambiar a modo claro",
+      "toggleAriaOff": "Cambiar a modo oscuro"
     },
     "language": {
       "title": "Idioma",

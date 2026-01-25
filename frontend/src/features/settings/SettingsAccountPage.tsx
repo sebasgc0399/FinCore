@@ -8,10 +8,11 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
+import { ThemeToggle } from "@/components/ThemeToggle/ThemeToggle"
 import { Label } from "@/components/ui/label"
 
 export const SettingsAccountPage = () => {
-  const { t, i18n } = useTranslation(["settings", "common"])
+  const { t, i18n } = useTranslation("settings")
   const currentLanguage = i18n.language?.startsWith("en") ? "en" : "es"
 
   const handleLanguageChange = (event: ChangeEvent<HTMLSelectElement>): void => {
@@ -32,9 +33,17 @@ export const SettingsAccountPage = () => {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <p className="text-sm text-muted-foreground">
-            {t("common:underConstruction")}
-          </p>
+          <div className="flex items-center justify-between gap-4">
+            <div className="space-y-1">
+              <p className="text-sm font-medium">
+                {t("settings:account.appearance.toggleLabel")}
+              </p>
+              <p className="text-xs text-muted-foreground">
+                {t("settings:account.appearance.toggleHint")}
+              </p>
+            </div>
+            <ThemeToggle />
+          </div>
         </CardContent>
       </Card>
 

@@ -66,8 +66,28 @@ export const ThemeProvider = ({ children }: ThemeProviderProps) => {
   }, [effectiveTheme, themeMode])
 
   useEffect(() => {
-    document.documentElement.classList.toggle("dark", effectiveTheme === "dark")
-    document.documentElement.style.colorScheme = effectiveTheme
+    const root = document.documentElement
+    const reduceMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)"
+    ).matches
+    let timeoutId: number | undefined
+
+    if (!reduceMotion) {
+      root.classList.add("theme-transition")
+      timeoutId = window.setTimeout(() => {
+        root.classList.remove("theme-transition")
+      }, 300)
+    }
+
+    root.classList.toggle("dark", effectiveTheme === "dark")
+    root.style.colorScheme = effectiveTheme
+
+    return () => {
+      if (timeoutId !== undefined) {
+        window.clearTimeout(timeoutId)
+      }
+      root.classList.remove("theme-transition")
+    }
   }, [effectiveTheme])
 
   useEffect(() => {

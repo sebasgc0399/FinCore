@@ -45,6 +45,7 @@ export const ModalShell = ({
   contentClassName,
 }: ModalShellProps) => {
   const isMobile = useMediaQuery("(max-width: 640px)")
+  const mobileContentClassName = contentClassName ?? "max-h-[90vh]"
 
   if (isMobile) {
     return (
@@ -57,8 +58,8 @@ export const ModalShell = ({
       >
         <DrawerContent
           className={cn(
-            "inset-x-0 bottom-0 top-auto max-h-[85vh] w-full rounded-t-2xl rounded-b-none border-t p-6 pt-4 pb-[env(safe-area-inset-bottom)] overflow-y-auto",
-            contentClassName
+            "inset-x-0 bottom-0 top-auto w-full rounded-t-2xl rounded-b-none border-t p-6 pt-4 pb-[env(safe-area-inset-bottom)] overflow-y-auto",
+            mobileContentClassName
           )}
         >
           <div

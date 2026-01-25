@@ -46,6 +46,10 @@
       "title": "Language",
       "description": "Choose the app language.",
       "label": "Language",
+      "selectTitle": "Choose language",
+      "selectDescription": "Select the language used across the app.",
+      "placeholder": "Select a language",
+      "empty": "No languages available.",
       "select": "Select language",
       "options": {
         "es": "Spanish",

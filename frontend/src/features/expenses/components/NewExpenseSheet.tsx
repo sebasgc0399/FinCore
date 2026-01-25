@@ -20,10 +20,6 @@ export const NewExpenseSheet = ({
       onOpenChange={onOpenChange}
       title="Nuevo gasto"
       description="En construcción."
-      snapPoints={[0.5, 0.9]}
-      activeSnapPoint={0.9}
-      closeThreshold={0.2}
-      contentClassName="max-h-[90vh] min-h-[90vh]"
       footer={
         <Button type="button" variant="secondary" onClick={handleClose}>
           Cerrar

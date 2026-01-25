@@ -1,22 +1,9 @@
-﻿import { createContext, useCallback, useEffect, useMemo, useState } from "react"
+﻿import { useCallback, useEffect, useMemo, useState } from "react"
 
 import type { ReactNode } from "react"
 
+import { ThemeContext, type Theme, type ThemeMode } from "@/app/theme-context"
 import { useMediaQuery } from "@/hooks/useMediaQuery"
-
-type Theme = "light" | "dark"
-
-type ThemeMode = "system" | "manual"
-
-type ThemeContextValue = {
-  themeMode: ThemeMode
-  setThemeMode: (mode: ThemeMode) => void
-  theme: Theme
-  toggleTheme: () => void
-  effectiveTheme: Theme
-}
-
-export const ThemeContext = createContext<ThemeContextValue | null>(null)
 
 type ThemeProviderProps = {
   children: ReactNode

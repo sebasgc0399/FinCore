@@ -29,6 +29,7 @@ type ModalShellProps = {
   snapPoints?: number[]
   activeSnapPoint?: number
   closeThreshold?: number
+  onSnapPointChange?: (snapPoint: number | null) => void
   contentClassName?: string
 }
 
@@ -42,6 +43,7 @@ export const ModalShell = ({
   snapPoints,
   activeSnapPoint,
   closeThreshold,
+  onSnapPointChange,
   contentClassName,
 }: ModalShellProps) => {
   const isMobile = useMediaQuery("(max-width: 640px)")
@@ -55,6 +57,7 @@ export const ModalShell = ({
         snapPoints={snapPoints}
         activeSnapPoint={activeSnapPoint}
         closeThreshold={closeThreshold}
+        onSnapPointChange={onSnapPointChange}
       >
         <DrawerContent
           className={cn(

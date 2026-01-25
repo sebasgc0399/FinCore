@@ -1,4 +1,5 @@
 ﻿import { Link } from "react-router-dom"
+import { useTranslation } from "react-i18next"
 
 import { isIOSSafari } from "@/lib/isIOSSafari"
 import { useAuth } from "@/features/auth/hooks/useAuth"
@@ -15,6 +16,7 @@ import {
 } from "@/components/ui/card"
 
 export const LoginPage = () => {
+  const { t } = useTranslation("auth")
   const { error, setError } = useAuth()
   const { errorMessage, isLoading, signIn } = useGoogleSignIn()
   const primaryError = errorMessage ?? error ?? null
@@ -39,17 +41,12 @@ export const LoginPage = () => {
             </div>
             <div className="space-y-1">
               <CardTitle className="text-2xl">FinCore</CardTitle>
-              <CardDescription>
-                Accede con tu cuenta de Google para continuar.
-              </CardDescription>
+              <CardDescription>{t("login.description")}</CardDescription>
             </div>
           </div>
         </CardHeader>
         <CardContent className="space-y-4">
-          <p className="text-sm text-muted-foreground">
-            Controla gastos, presupuestos y metas con claridad, estés donde
-            estés.
-          </p>
+          <p className="text-sm text-muted-foreground">{t("login.tagline")}</p>
           <Button
             className="w-full"
             disabled={isLoading}
@@ -62,7 +59,7 @@ export const LoginPage = () => {
             >
               G
             </span>
-            {isLoading ? "Conectando..." : "Continuar con Google"}
+            {isLoading ? t("login.connecting") : t("login.continueGoogle")}
           </Button>
           {primaryError ? (
             <p className="text-sm text-destructive" role="alert">
@@ -71,17 +68,16 @@ export const LoginPage = () => {
           ) : null}
           {showIOSSafariHint ? (
             <p className="text-sm text-muted-foreground">
-              En Safari iOS, los popups pueden bloquearse. Desactiva modo
-              privado o habilita ventanas emergentes.
+              {t("login.iosHint")}
             </p>
           ) : null}
         </CardContent>
         <CardFooter className="justify-center gap-4 text-xs text-muted-foreground">
           <Link className="underline-offset-4 hover:underline" to="/terms">
-            Términos
+            {t("login.terms")}
           </Link>
           <Link className="underline-offset-4 hover:underline" to="/privacy">
-            Privacidad
+            {t("login.privacy")}
           </Link>
         </CardFooter>
       </Card>

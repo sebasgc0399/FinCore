@@ -1,5 +1,6 @@
 ﻿import { Link, NavLink, Outlet, useLocation } from "react-router-dom"
 import { useMemo, useState } from "react"
+import { useTranslation } from "react-i18next"
 import {
   BarChart3,
   Home,
@@ -18,17 +19,17 @@ import { Button } from "@/components/ui/button"
 
 type NavItem = {
   to: string
-  label: string
+  labelKey: string
   Icon: typeof Home
   end?: boolean
 }
 
 const NAV_ITEMS: NavItem[] = [
-  { to: "/", label: "Inicio", Icon: Home, end: true },
-  { to: "/movimientos", label: "Movimientos", Icon: List },
-  { to: "/objetivos", label: "Objetivos", Icon: Target },
-  { to: "/metricas", label: "Métricas", Icon: BarChart3 },
-  { to: "/asesor", label: "Asesor IA", Icon: Sparkles },
+  { to: "/", labelKey: "home", Icon: Home, end: true },
+  { to: "/movimientos", labelKey: "movements", Icon: List },
+  { to: "/objetivos", labelKey: "objectives", Icon: Target },
+  { to: "/metricas", labelKey: "metrics", Icon: BarChart3 },
+  { to: "/asesor", labelKey: "advisor", Icon: Sparkles },
 ]
 
 const TITLE_BY_PATH = {
@@ -49,6 +50,7 @@ const FAB_PATH_PREFIXES = [
 ] as const
 
 export const AppShell = () => {
+  const { t } = useTranslation("nav")
   const { pathname } = useLocation()
   const { isLoading, signOut } = useSignOut()
   const [isNewExpenseOpen, setIsNewExpenseOpen] = useState(false)
@@ -127,23 +129,27 @@ export const AppShell = () => {
 
       <nav className="fixed bottom-0 left-0 right-0 border-t bg-background/95 backdrop-blur">
         <div className="mx-auto grid w-full max-w-4xl grid-cols-5 gap-1 px-2 py-1.5">
-          {NAV_ITEMS.map(({ to, label, Icon, end }) => (
-            <NavLink
-              key={to}
-              aria-label={label}
-              className={({ isActive }) =>
-                cn(
-                  "flex flex-col items-center gap-0.5 rounded-md px-2 py-1.5 text-[10px] font-medium text-muted-foreground transition-colors hover:text-foreground sm:text-[11px]",
-                  isActive && "bg-muted text-foreground ring-1 ring-border"
-                )
-              }
-              end={end}
-              to={to}
-            >
-              <Icon className="h-5 w-5" />
-              <span>{label}</span>
-            </NavLink>
-          ))}
+          {NAV_ITEMS.map(({ to, labelKey, Icon, end }) => {
+            const label = t(labelKey)
+
+            return (
+              <NavLink
+                key={to}
+                aria-label={label}
+                className={({ isActive }) =>
+                  cn(
+                    "flex flex-col items-center gap-0.5 rounded-md px-2 py-1.5 text-[10px] font-medium text-muted-foreground transition-colors hover:text-foreground sm:text-[11px]",
+                    isActive && "bg-muted text-foreground ring-1 ring-border"
+                  )
+                }
+                end={end}
+                to={to}
+              >
+                <Icon className="h-5 w-5" />
+                <span>{label}</span>
+              </NavLink>
+            )
+          })}
         </div>
       </nav>
     </div>

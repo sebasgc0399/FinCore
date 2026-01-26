@@ -1,4 +1,4 @@
-import type { ReactNode } from "react"
+import { useEffect, useRef, type ReactNode } from "react"
 
 import { cn } from "@/lib/utils"
 import {
@@ -47,27 +47,75 @@ export const ModalShell = ({
   contentClassName,
 }: ModalShellProps) => {
   const isMobile = useMediaQuery("(max-width: 640px)")
-  const mobileContentClassName = contentClassName ?? "max-h-[90vh]"
-  const mobileGutterClassName = "px-8"
+  const mobileContentClassName = contentClassName ?? ""
+  const mobileGutterClassName = "px-5"
+  const descriptionProps = description
+    ? {}
+    : { "aria-describedby": undefined }
+  const contentRef = useRef<HTMLDivElement | null>(null)
+
+  const focusFirstInteractive = (): void => {
+    const root = contentRef.current
+    if (!root) {
+      return
+    }
+
+    const focusable = root.querySelector<HTMLElement>(
+      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+    )
+
+    if (focusable) {
+      focusable.focus()
+      return
+    }
+
+    root.focus()
+  }
+
+  const handleOpenChange = (nextOpen: boolean): void => {
+    if (nextOpen && typeof document !== "undefined") {
+      const activeElement = document.activeElement
+      if (activeElement instanceof HTMLElement) {
+        activeElement.blur()
+      }
+    }
+
+    onOpenChange(nextOpen)
+  }
+
+  useEffect(() => {
+    if (!open || typeof window === "undefined") {
+      return
+    }
+
+    const frame = window.requestAnimationFrame(() => {
+      focusFirstInteractive()
+    })
+
+    return () => window.cancelAnimationFrame(frame)
+  }, [open])
 
   if (isMobile) {
     return (
       <Drawer
         open={open}
-        onOpenChange={onOpenChange}
+        onOpenChange={handleOpenChange}
         snapPoints={snapPoints}
         activeSnapPoint={activeSnapPoint}
         closeThreshold={closeThreshold}
         setActiveSnapPoint={setActiveSnapPoint}
       >
         <DrawerContent
+          ref={contentRef}
+          tabIndex={-1}
+          {...descriptionProps}
           className={cn(
-            "inset-x-0 bottom-0 top-auto flex w-full flex-col overflow-hidden rounded-t-2xl rounded-b-none border-t pt-4 pb-[env(safe-area-inset-bottom)]",
+            "inset-x-0 bottom-0 top-auto flex w-full max-h-[90vh] flex-col overflow-hidden rounded-t-2xl rounded-b-none border-t pt-4 pb-[env(safe-area-inset-bottom)]",
             mobileContentClassName
           )}
         >
           <div
-            className="mx-auto mb-4 h-1.5 w-10 rounded-full bg-muted-foreground/20"
+            className="mx-auto mb-3 h-1.5 w-10 rounded-full bg-muted-foreground/20"
             aria-hidden="true"
           />
           <DrawerHeader
@@ -80,14 +128,14 @@ export const ModalShell = ({
           </DrawerHeader>
           <div
             className={cn(
-              "min-h-0 flex-1 overflow-y-auto pt-4",
+              "min-h-0 flex-1 overflow-y-auto pt-3",
               mobileGutterClassName
             )}
           >
             {children}
           </div>
           {footer ? (
-            <DrawerFooter className={cn("mt-4 p-0", mobileGutterClassName)}>
+            <DrawerFooter className={cn("p-0 pt-3", mobileGutterClassName)}>
               {footer}
             </DrawerFooter>
           ) : null}
@@ -97,15 +145,20 @@ export const ModalShell = ({
   }
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-lg">
+    <Dialog open={open} onOpenChange={handleOpenChange}>
+      <DialogContent
+        ref={contentRef}
+        tabIndex={-1}
+        {...descriptionProps}
+        className="flex max-h-[85vh] max-w-lg flex-col overflow-hidden"
+      >
         <DialogHeader className="text-left">
           <DialogTitle>{title}</DialogTitle>
           {description ? (
             <DialogDescription>{description}</DialogDescription>
           ) : null}
         </DialogHeader>
-        <div className="pt-4">{children}</div>
+        <div className="min-h-0 flex-1 overflow-y-auto pt-4">{children}</div>
         {footer ? <DialogFooter className="pt-4">{footer}</DialogFooter> : null}
       </DialogContent>
     </Dialog>

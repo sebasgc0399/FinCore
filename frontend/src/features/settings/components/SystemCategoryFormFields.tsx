@@ -1,10 +1,12 @@
-import { useMemo } from "react"
+import { useEffect, useMemo, useState } from "react"
+import type { LucideIcon } from "lucide-react"
 import { useTranslation } from "react-i18next"
 
 import { resolveCategoryLabel } from "@/lib/resolve-category-label"
 import { IconPicker } from "@/features/settings/components/IconPicker"
 
 import { Button } from "@/components/ui/button"
+import { ColorPicker } from "@/components/ui/color-picker"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 
@@ -21,9 +23,6 @@ type SystemCategoryFormFieldsProps = {
   onDraftChange: (updates: Partial<CategoryDraft>) => void
 }
 
-const isValidHexColor = (value: string): boolean =>
-  /^#[0-9A-Fa-f]{6}$/.test(value)
-
 export const SystemCategoryFormFields = ({
   formId,
   draft,
@@ -34,7 +33,9 @@ export const SystemCategoryFormFields = ({
   onDraftChange,
 }: SystemCategoryFormFieldsProps) => {
   const { t } = useTranslation(["settings", "common"])
-  const colorValue = isValidHexColor(draft.color) ? draft.color : "#0F172A"
+  const [iconMap, setIconMap] = useState<Record<string, LucideIcon> | null>(
+    null
+  )
 
   const parentOptions = useMemo(() => {
     return categories
@@ -47,6 +48,35 @@ export const SystemCategoryFormFields = ({
         label: resolveCategoryLabel(category, t),
       }))
   }, [categories, draft.id, draft.kind, t])
+
+  useEffect(() => {
+    if (!draft.icon || iconMap) {
+      return
+    }
+
+    let isMounted = true
+
+    void import("lucide-react")
+      .then((module) => {
+        if (!isMounted) {
+          return
+        }
+
+        const icons = (module as { icons?: Record<string, LucideIcon> }).icons ?? {}
+        setIconMap(icons)
+      })
+      .catch(() => {
+        if (isMounted) {
+          setIconMap({})
+        }
+      })
+
+    return () => {
+      isMounted = false
+    }
+  }, [draft.icon, iconMap])
+
+  const SelectedIcon = iconMap?.[draft.icon]
 
   return (
     <>
@@ -87,16 +117,20 @@ export const SystemCategoryFormFields = ({
         <Label htmlFor={`${formId}-icon`}>
           {t("settings:admin.systemCategories.form.iconLabel")}
         </Label>
-        <div className="flex flex-col gap-2 sm:flex-row">
-          <Input
-            id={`${formId}-icon`}
-            onChange={(event) => onDraftChange({ icon: event.target.value })}
-            placeholder={t("settings:admin.systemCategories.form.iconPlaceholder")}
-            value={draft.icon}
-            className="h-11"
-          />
+        <div className="grid grid-cols-[44px_1fr] items-center gap-2">
+          <div
+            className="flex h-11 w-11 items-center justify-center rounded-md border border-input bg-muted/40"
+            aria-hidden="true"
+          >
+            {SelectedIcon ? (
+              <SelectedIcon className="h-5 w-5 text-foreground" />
+            ) : (
+              <span className="text-muted-foreground">-</span>
+            )}
+          </div>
           <Button
-            className="h-11 sm:w-48"
+            className="h-11 w-full"
+            id={`${formId}-icon`}
             type="button"
             variant="outline"
             onClick={() => onIconPickerOpenChange(true)}
@@ -137,22 +171,16 @@ export const SystemCategoryFormFields = ({
         <Label htmlFor={`${formId}-color`}>
           {t("settings:admin.form.colorLabel")}
         </Label>
-        <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
-          <Input
-            id={`${formId}-color`}
-            onChange={(event) => onDraftChange({ color: event.target.value })}
-            placeholder={t("settings:admin.form.colorPlaceholder")}
-            value={draft.color}
-            className="h-11"
-          />
-          <input
-            aria-label={t("settings:admin.form.colorLabel")}
-            className="h-11 w-full cursor-pointer rounded-md border border-input bg-background px-2 sm:w-20"
-            onChange={(event) => onDraftChange({ color: event.target.value })}
-            type="color"
-            value={colorValue}
-          />
-        </div>
+        <ColorPicker
+          value={draft.color}
+          onChange={(color) => onDraftChange({ color })}
+          placeholder={t("settings:admin.form.colorPickerPlaceholder")}
+          inputPlaceholder={t("settings:admin.form.colorPlaceholder").replace(
+            /#/g,
+            ""
+          )}
+          inputId={`${formId}-color`}
+        />
       </div>
 
       <div className="space-y-2">
@@ -186,10 +214,15 @@ export const SystemCategoryFormFields = ({
         onChange={(icon) => onDraftChange({ icon })}
         title={t("settings:admin.form.iconPicker")}
         searchLabel={t("settings:admin.form.iconSearchLabel")}
+        searchHint={t("settings:admin.form.iconSearchHint")}
         searchPlaceholder={t("settings:admin.form.iconSearchPlaceholder")}
         emptyLabel={t("settings:admin.form.iconEmpty")}
         loadingLabel={t("settings:admin.form.iconLoading")}
         cancelLabel={t("settings:admin.systemCategories.actions.cancel")}
+        loadMoreLabel={t("settings:admin.form.iconLoadMore")}
+        resultsLabel={(shown, total) =>
+          t("settings:admin.form.iconResults", { shown, total })
+        }
       />
     </>
   )

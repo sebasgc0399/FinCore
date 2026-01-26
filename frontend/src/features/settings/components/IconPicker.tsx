@@ -2,6 +2,8 @@ import { useEffect, useId, useMemo, useRef, useState } from "react"
 import type { LucideIcon } from "lucide-react"
 
 import { cn } from "@/lib/utils"
+import { buildIconCatalog } from "@/features/settings/data/icon-catalog"
+
 import { ModalShell } from "@/components/common/ModalShell"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -20,11 +22,17 @@ type IconPickerProps = {
   title: string
   description?: string
   searchLabel: string
+  searchHint?: string
   searchPlaceholder: string
   emptyLabel: string
   loadingLabel: string
   cancelLabel: string
+  loadMoreLabel?: string
+  resultsLabel?: (shown: number, total: number) => string
 }
+
+const PAGE_SIZE = 80
+const SEARCH_LIMIT = 200
 
 export const IconPicker = ({
   open,
@@ -34,13 +42,17 @@ export const IconPicker = ({
   title,
   description,
   searchLabel,
+  searchHint,
   searchPlaceholder,
   emptyLabel,
   loadingLabel,
   cancelLabel,
+  loadMoreLabel,
+  resultsLabel,
 }: IconPickerProps) => {
   const [icons, setIcons] = useState<IconEntry[] | null>(null)
   const [query, setQuery] = useState("")
+  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE)
   const searchRef = useRef<HTMLInputElement>(null)
   const searchId = useId()
   const isLoading = open && icons === null
@@ -49,6 +61,8 @@ export const IconPicker = ({
     if (!open) {
       return
     }
+
+    setVisibleCount(PAGE_SIZE)
 
     const frame = window.requestAnimationFrame(() => {
       searchRef.current?.focus()
@@ -71,12 +85,11 @@ export const IconPicker = ({
         }
 
         const iconMap = (module as { icons?: Record<string, LucideIcon> }).icons ?? {}
-        const entries = Object.entries(iconMap)
-          .map(([name, Icon]) => ({
-            name,
-            Icon: Icon as LucideIcon,
-          }))
-          .sort((a, b) => a.name.localeCompare(b.name))
+        const catalog = buildIconCatalog(iconMap)
+        const entries = catalog.map((name) => ({
+          name,
+          Icon: iconMap[name],
+        }))
 
         setIcons(entries)
       })
@@ -91,12 +104,13 @@ export const IconPicker = ({
     }
   }, [open, icons])
 
+  const normalizedQuery = query.trim().toLowerCase()
+  const isSearching = normalizedQuery !== ""
+
   const filteredIcons = useMemo(() => {
     if (!icons) {
       return []
     }
-
-    const normalizedQuery = query.trim().toLowerCase()
     if (!normalizedQuery) {
       return icons
     }
@@ -104,7 +118,26 @@ export const IconPicker = ({
     return icons.filter(({ name }) =>
       name.toLowerCase().includes(normalizedQuery)
     )
-  }, [icons, query])
+  }, [icons, normalizedQuery])
+
+  const visibleIcons = useMemo(() => {
+    if (!filteredIcons.length) {
+      return []
+    }
+
+    if (isSearching) {
+      return filteredIcons.slice(0, SEARCH_LIMIT)
+    }
+
+    return filteredIcons.slice(0, visibleCount)
+  }, [filteredIcons, isSearching, visibleCount])
+
+  const totalCount = filteredIcons.length
+  const shownCount = visibleIcons.length
+  const resultsText =
+    resultsLabel && totalCount > 0 ? resultsLabel(shownCount, totalCount) : null
+  const canLoadMore =
+    Boolean(loadMoreLabel) && !isSearching && shownCount < totalCount
 
   const handleOpenChange = (nextOpen: boolean): void => {
     if (!nextOpen) {
@@ -116,6 +149,12 @@ export const IconPicker = ({
   const handleSelect = (iconName: string): void => {
     onChange(iconName)
     handleOpenChange(false)
+  }
+
+  const handleLoadMore = (): void => {
+    setVisibleCount((current) =>
+      Math.min(current + PAGE_SIZE, totalCount)
+    )
   }
 
   const footer = (
@@ -152,15 +191,21 @@ export const IconPicker = ({
             className="h-11"
           />
         </div>
+        {searchHint ? (
+          <p className="text-xs text-muted-foreground">{searchHint}</p>
+        ) : null}
+        {resultsText ? (
+          <p className="text-xs text-muted-foreground">{resultsText}</p>
+        ) : null}
 
         {isLoading ? (
           <p className="text-sm text-muted-foreground">{loadingLabel}</p>
-        ) : filteredIcons.length === 0 ? (
+        ) : visibleIcons.length === 0 ? (
           <p className="text-sm text-muted-foreground">{emptyLabel}</p>
         ) : (
           <div className="max-h-[50vh] overflow-y-auto pr-1">
             <div className="grid grid-cols-4 gap-2 sm:grid-cols-6 md:grid-cols-8">
-              {filteredIcons.map(({ name, Icon }) => {
+              {visibleIcons.map(({ name, Icon }) => {
                 const isSelected = value === name
 
                 return (
@@ -184,6 +229,16 @@ export const IconPicker = ({
             </div>
           </div>
         )}
+        {canLoadMore ? (
+          <Button
+            className="h-11 w-full"
+            type="button"
+            variant="outline"
+            onClick={handleLoadMore}
+          >
+            {loadMoreLabel}
+          </Button>
+        ) : null}
       </div>
     </ModalShell>
   )

@@ -1,0 +1,183 @@
+import type { LucideIcon } from "lucide-react"
+
+export const PINNED_ICONS = [
+  "Wallet",
+  "CreditCard",
+  "Banknote",
+  "PiggyBank",
+  "HandCoins",
+  "Receipt",
+  "Tag",
+  "ShoppingCart",
+  "ShoppingBag",
+  "Store",
+  "Gift",
+  "Calendar",
+  "Briefcase",
+  "Home",
+  "Building",
+  "Car",
+  "Bus",
+  "Train",
+  "Plane",
+  "Bike",
+  "Fuel",
+  "MapPin",
+  "Compass",
+  "Coffee",
+  "Utensils",
+  "Pizza",
+  "Burger",
+  "IceCream",
+  "Cake",
+  "Beer",
+  "Wine",
+  "Heart",
+  "Stethoscope",
+  "Pill",
+  "Hospital",
+  "Dumbbell",
+  "Gamepad2",
+  "Music",
+  "Headphones",
+  "Film",
+  "Camera",
+  "Tv",
+  "Smartphone",
+  "Laptop",
+  "Monitor",
+  "Wifi",
+  "Lightbulb",
+  "Plug",
+  "Droplet",
+  "Flame",
+  "Leaf",
+  "PawPrint",
+  "Baby",
+  "Shirt",
+  "Scissors",
+  "GraduationCap",
+  "Book",
+  "BookOpen",
+  "Pen",
+  "Pencil",
+  "Calculator",
+  "DollarSign",
+  "Euro",
+  "PoundSterling",
+  "JapaneseYen",
+  "Globe",
+  "Ticket",
+] as const
+
+export const ICON_KEYWORDS = [
+  "wallet",
+  "credit",
+  "bank",
+  "coin",
+  "dollar",
+  "euro",
+  "yen",
+  "pound",
+  "receipt",
+  "tag",
+  "sale",
+  "shop",
+  "cart",
+  "bag",
+  "store",
+  "gift",
+  "brief",
+  "home",
+  "house",
+  "building",
+  "car",
+  "bus",
+  "train",
+  "tram",
+  "plane",
+  "ship",
+  "bike",
+  "fuel",
+  "map",
+  "compass",
+  "parking",
+  "coffee",
+  "utensil",
+  "pizza",
+  "burger",
+  "ice",
+  "cake",
+  "cookie",
+  "drink",
+  "beer",
+  "wine",
+  "heart",
+  "pulse",
+  "stetho",
+  "pill",
+  "hospital",
+  "cross",
+  "doctor",
+  "book",
+  "graduation",
+  "school",
+  "pen",
+  "pencil",
+  "calculator",
+  "phone",
+  "smart",
+  "laptop",
+  "computer",
+  "monitor",
+  "wifi",
+  "plug",
+  "battery",
+  "game",
+  "gamepad",
+  "music",
+  "film",
+  "camera",
+  "tv",
+  "ticket",
+  "headphone",
+  "baby",
+  "paw",
+  "shirt",
+  "scissor",
+  "leaf",
+  "tree",
+  "sun",
+  "moon",
+  "star",
+  "sparkle",
+  "flower",
+] as const
+
+export const MAX_ICONS = 500
+
+export const buildIconCatalog = (
+  iconMap: Record<string, LucideIcon>
+): string[] => {
+  const pinned = PINNED_ICONS.filter((name) => name in iconMap)
+  const filtered = Object.keys(iconMap)
+    .filter((name) =>
+      ICON_KEYWORDS.some((keyword) =>
+        name.toLowerCase().includes(keyword)
+      )
+    )
+    .sort((a, b) => a.localeCompare(b))
+
+  const seen = new Set<string>()
+  const unique: string[] = []
+
+  for (const name of [...pinned, ...filtered]) {
+    if (seen.has(name)) {
+      continue
+    }
+    seen.add(name)
+    unique.push(name)
+  }
+
+  return unique.slice(0, MAX_ICONS)
+}

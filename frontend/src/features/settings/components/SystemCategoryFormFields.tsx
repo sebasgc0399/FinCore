@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next"
 import { resolveCategoryLabel } from "@/lib/resolve-category-label"
 import { IconPicker } from "@/features/settings/components/IconPicker"
 
+import { SelectSheet } from "@/components/common/SelectSheet"
 import { Button } from "@/components/ui/button"
 import { ColorPicker } from "@/components/ui/color-picker"
 import { Input } from "@/components/ui/input"
@@ -141,30 +142,28 @@ export const SystemCategoryFormFields = ({
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor={`${formId}-kind`}>
-          {t("settings:admin.systemCategories.form.kindLabel")}
-        </Label>
-        <select
-          id={`${formId}-kind`}
-          className="h-11 w-full rounded-md border border-input bg-background px-3 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-          onChange={(event) =>
+        <SelectSheet
+          label={t("settings:admin.systemCategories.form.kindLabel")}
+          title={t("settings:admin.systemCategories.form.kindLabel")}
+          description={t("settings:admin.systemCategories.form.kindDescription")}
+          value={draft.kind}
+          options={[
+            {
+              value: "expense",
+              label: t("settings:admin.systemCategories.kind.expense"),
+            },
+            {
+              value: "income",
+              label: t("settings:admin.systemCategories.kind.income"),
+            },
+          ]}
+          onChange={(value) =>
             onDraftChange({
-              kind: event.target.value === "income" ? "income" : "expense",
+              kind: value === "income" ? "income" : "expense",
               parentId: "",
             })
           }
-          value={draft.kind}
-        >
-          <option value="expense">
-            {t("settings:admin.systemCategories.kind.expense")}
-          </option>
-          <option value="income">
-            {t("settings:admin.systemCategories.kind.income")}
-          </option>
-        </select>
-        <p className="text-xs text-muted-foreground">
-          {t("settings:admin.systemCategories.form.kindDescription")}
-        </p>
+        />
       </div>
 
       <div className="space-y-2">
@@ -184,22 +183,22 @@ export const SystemCategoryFormFields = ({
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor={`${formId}-parent`}>
-          {t("settings:admin.form.parentLabel")}
-        </Label>
-        <select
-          id={`${formId}-parent`}
-          className="h-11 w-full rounded-md border border-input bg-background px-3 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-          onChange={(event) => onDraftChange({ parentId: event.target.value })}
+        <SelectSheet
+          label={t("settings:admin.form.parentLabel")}
+          title={t("settings:admin.form.parentLabel")}
+          placeholder={t("settings:admin.form.parentPlaceholder")}
           value={draft.parentId}
-        >
-          <option value="">{t("settings:admin.form.parentNone")}</option>
-          {parentOptions.map((option) => (
-            <option key={option.value} value={option.value}>
-              {option.label}
-            </option>
-          ))}
-        </select>
+          options={[
+            { value: "", label: t("settings:admin.form.parentNone") },
+            ...parentOptions,
+          ]}
+          onChange={(value) => onDraftChange({ parentId: value })}
+          emptyLabel={
+            parentOptions.length === 0
+              ? t("settings:admin.form.parentEmpty")
+              : undefined
+          }
+        />
         {parentOptions.length === 0 ? (
           <p className="text-xs text-muted-foreground">
             {t("settings:admin.form.parentEmpty")}

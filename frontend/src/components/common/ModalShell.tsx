@@ -84,7 +84,7 @@ export const ModalShell = ({
   }
 
   useEffect(() => {
-    if (!open || typeof window === "undefined") {
+    if (!open || isMobile || typeof window === "undefined") {
       return
     }
 
@@ -93,7 +93,7 @@ export const ModalShell = ({
     })
 
     return () => window.cancelAnimationFrame(frame)
-  }, [open])
+  }, [open, isMobile])
 
   if (isMobile) {
     return (

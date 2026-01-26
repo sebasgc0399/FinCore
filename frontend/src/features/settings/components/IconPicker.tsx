@@ -8,6 +8,7 @@ import { ModalShell } from "@/components/common/ModalShell"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { useMediaQuery } from "@/hooks/useMediaQuery"
 
 type IconEntry = {
   name: string
@@ -55,10 +56,11 @@ export const IconPicker = ({
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE)
   const searchRef = useRef<HTMLInputElement>(null)
   const searchId = useId()
+  const isMobile = useMediaQuery("(max-width: 640px)")
   const isLoading = open && icons === null
 
   useEffect(() => {
-    if (!open) {
+    if (!open || isMobile) {
       return
     }
 
@@ -69,7 +71,7 @@ export const IconPicker = ({
     })
 
     return () => window.cancelAnimationFrame(frame)
-  }, [open])
+  }, [open, isMobile])
 
   useEffect(() => {
     if (!open || icons) {

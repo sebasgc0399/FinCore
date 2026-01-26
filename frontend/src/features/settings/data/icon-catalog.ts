@@ -4,179 +4,214 @@ export const PINNED_ICONS = [
   "Wallet",
   "CreditCard",
   "Banknote",
+  "Coins",
   "PiggyBank",
   "HandCoins",
   "Receipt",
-  "Tag",
+  "ReceiptText",
   "ShoppingCart",
-  "ShoppingBag",
-  "Store",
-  "Gift",
-  "Calendar",
-  "Briefcase",
   "Home",
-  "Building",
   "Car",
-  "Bus",
-  "Train",
-  "Plane",
-  "Bike",
-  "Fuel",
-  "MapPin",
-  "Compass",
-  "Coffee",
   "Utensils",
-  "Pizza",
-  "Burger",
-  "IceCream",
-  "Cake",
-  "Beer",
-  "Wine",
-  "Heart",
-  "Stethoscope",
-  "Pill",
-  "Hospital",
-  "Dumbbell",
-  "Gamepad2",
-  "Music",
-  "Headphones",
-  "Film",
-  "Camera",
-  "Tv",
-  "Smartphone",
+  "HeartPulse",
   "Laptop",
-  "Monitor",
-  "Wifi",
-  "Lightbulb",
-  "Plug",
-  "Droplet",
-  "Flame",
-  "Leaf",
-  "PawPrint",
-  "Baby",
-  "Shirt",
-  "Scissors",
-  "GraduationCap",
-  "Book",
-  "BookOpen",
-  "Pen",
-  "Pencil",
-  "Calculator",
-  "DollarSign",
-  "Euro",
-  "PoundSterling",
-  "JapaneseYen",
-  "Globe",
-  "Ticket",
 ] as const
 
-export const ICON_KEYWORDS = [
+export const ICON_GROUPS = {
+  finance: [
+    "Wallet",
+    "CreditCard",
+    "Banknote",
+    "Coins",
+    "PiggyBank",
+    "HandCoins",
+    "Receipt",
+    "ReceiptText",
+    "BadgeDollarSign",
+    "CircleDollarSign",
+    "Landmark",
+  ],
+  shopping: [
+    "Tag",
+    "ShoppingCart",
+    "ShoppingBag",
+    "Store",
+    "Gift",
+    "Package",
+    "Barcode",
+    "QrCode",
+  ],
+  food: [
+    "Utensils",
+    "Coffee",
+    "Pizza",
+    "Burger",
+    "IceCream",
+    "Cake",
+    "Beer",
+    "Wine",
+    "Apple",
+    "Salad",
+    "Fish",
+  ],
+  homeServices: [
+    "Home",
+    "Building",
+    "Bed",
+    "Lightbulb",
+    "Plug",
+  ],
+  transport: ["Car", "Bus", "Train", "Bike", "Fuel"],
+  health: ["Stethoscope", "Pill", "Hospital", "HeartPulse"],
+  entertainment: ["Gamepad2", "Music", "Film", "Camera", "Headphones"],
+  educationWork: [
+    "BookOpen",
+    "GraduationCap",
+    "Pen",
+    "Pencil",
+    "Briefcase",
+    "Calendar",
+    "Clock",
+  ],
+  technology: ["Laptop", "Smartphone", "Monitor", "Wifi"],
+  travel: ["Plane", "MapPin", "Compass", "Globe", "Ticket", "Luggage", "Hotel"],
+  petsFamily: ["Baby", "PawPrint"],
+  sports: ["Dumbbell"],
+  utilities: ["Droplet", "Flame", "Leaf", "ShieldCheck", "Wrench", "Scissors"],
+} as const
+
+const GROUP_ORDER = [
+  "finance",
+  "shopping",
+  "food",
+  "homeServices",
+  "transport",
+  "health",
+  "entertainment",
+  "educationWork",
+  "technology",
+  "travel",
+  "petsFamily",
+  "sports",
+  "utilities",
+] as const
+
+const FALLBACK_KEYWORDS = [
   "wallet",
-  "credit",
-  "bank",
+  "banknote",
+  "receipt",
   "coin",
+  "cash",
   "dollar",
   "euro",
   "yen",
   "pound",
-  "receipt",
-  "tag",
-  "sale",
-  "shop",
   "cart",
   "bag",
   "store",
   "gift",
-  "brief",
+  "package",
+  "barcode",
+  "qrcode",
+  "utensil",
+  "coffee",
+  "pizza",
+  "burger",
+  "icecream",
+  "cake",
+  "beer",
+  "wine",
+  "salad",
+  "fish",
   "home",
-  "house",
   "building",
+  "hotel",
+  "bed",
+  "lightbulb",
+  "plug",
+  "droplet",
+  "flame",
+  "leaf",
   "car",
   "bus",
   "train",
-  "tram",
   "plane",
-  "ship",
   "bike",
   "fuel",
-  "map",
+  "mappin",
   "compass",
-  "parking",
-  "coffee",
-  "utensil",
-  "pizza",
-  "burger",
-  "ice",
-  "cake",
-  "cookie",
-  "drink",
-  "beer",
-  "wine",
-  "heart",
-  "pulse",
-  "stetho",
+  "stethoscope",
   "pill",
   "hospital",
-  "cross",
-  "doctor",
-  "book",
-  "graduation",
-  "school",
-  "pen",
-  "pencil",
-  "calculator",
-  "phone",
-  "smart",
-  "laptop",
-  "computer",
-  "monitor",
-  "wifi",
-  "plug",
-  "battery",
-  "game",
+  "heartpulse",
+  "dumbbell",
   "gamepad",
   "music",
   "film",
   "camera",
-  "tv",
-  "ticket",
-  "headphone",
+  "headphones",
+  "bookopen",
+  "graduation",
+  "briefcase",
+  "calendar",
+  "clock",
+  "laptop",
+  "smartphone",
+  "monitor",
+  "wifi",
+  "shieldcheck",
+  "wrench",
+  "scissors",
   "baby",
-  "paw",
-  "shirt",
-  "scissor",
-  "leaf",
-  "tree",
-  "sun",
-  "moon",
-  "star",
-  "sparkle",
-  "flower",
+  "pawprint",
+  "globe",
+  "ticket",
+  "luggage",
 ] as const
 
 export const MAX_ICONS = 500
+const MIN_ICONS = 200
 
 export const buildIconCatalog = (
   iconMap: Record<string, LucideIcon>
 ): string[] => {
-  const pinned = PINNED_ICONS.filter((name) => name in iconMap)
-  const filtered = Object.keys(iconMap)
-    .filter((name) =>
-      ICON_KEYWORDS.some((keyword) =>
-        name.toLowerCase().includes(keyword)
-      )
-    )
-    .sort((a, b) => a.localeCompare(b))
-
   const seen = new Set<string>()
   const unique: string[] = []
 
-  for (const name of [...pinned, ...filtered]) {
-    if (seen.has(name)) {
-      continue
+  const addNames = (names: readonly string[]): void => {
+    for (const name of names) {
+      if (!(name in iconMap) || seen.has(name)) {
+        continue
+      }
+      seen.add(name)
+      unique.push(name)
+      if (unique.length >= MAX_ICONS) {
+        return
+      }
     }
-    seen.add(name)
-    unique.push(name)
+  }
+
+  addNames(PINNED_ICONS)
+
+  for (const group of GROUP_ORDER) {
+    addNames(ICON_GROUPS[group])
+    if (unique.length >= MAX_ICONS) {
+      return unique.slice(0, MAX_ICONS)
+    }
+  }
+
+  if (unique.length < MIN_ICONS) {
+    const fallback = Object.keys(iconMap)
+      .filter(
+        (name) =>
+          !seen.has(name) &&
+          FALLBACK_KEYWORDS.some((keyword) =>
+            name.toLowerCase().includes(keyword)
+          )
+      )
+      .sort((a, b) => a.localeCompare(b))
+
+    addNames(fallback)
   }
 
   return unique.slice(0, MAX_ICONS)

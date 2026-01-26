@@ -106,8 +106,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
               return
             }
 
-            setThemeMode("manual")
             setTheme(preferences.theme)
+            setThemeMode("manual")
           },
           (preferencesError) => {
             if (!isMounted) {

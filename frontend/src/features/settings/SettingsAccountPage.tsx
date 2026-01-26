@@ -22,7 +22,7 @@ import { useTheme } from "@/hooks/useTheme"
 export const SettingsAccountPage = () => {
   const { t, i18n } = useTranslation("settings")
   const { user, setError } = useAuth()
-  const { themeMode, setThemeMode, theme, effectiveTheme } = useTheme()
+  const { themeMode, setThemeMode, setTheme, theme, effectiveTheme } = useTheme()
   const currentLanguage = i18n.language?.startsWith("en") ? "en" : "es"
   const isSystemMode = themeMode === "system"
   const systemSwitchId = "system-theme-switch"
@@ -57,10 +57,15 @@ export const SettingsAccountPage = () => {
   }
 
   const handleSystemThemeChange = (checked: boolean): void => {
-    const nextMode = checked ? "system" : "manual"
-    const nextTheme = nextMode === "manual" ? effectiveTheme : theme
-    setThemeMode(nextMode)
-    void persistPreferences({ themeMode: nextMode, theme: nextTheme })
+    if (checked) {
+      setThemeMode("system")
+      void persistPreferences({ themeMode: "system", theme })
+      return
+    }
+
+    setTheme(effectiveTheme)
+    setThemeMode("manual")
+    void persistPreferences({ themeMode: "manual", theme: effectiveTheme })
   }
 
   const handleThemeToggle = (nextTheme: "light" | "dark") => {

@@ -37,6 +37,14 @@ const buildDraft = (
   parentId: initialCategory?.parentId ?? "",
 })
 
+const getNextOrderForKind = (
+  categories: SystemCategory[],
+  kind: CategoryKind
+): number =>
+  categories
+    .filter((category) => category.kind === kind)
+    .reduce((maxOrder, category) => Math.max(maxOrder, category.order), -1) + 1
+
 export const SystemCategoryForm = ({
   open,
   onOpenChange,
@@ -70,6 +78,9 @@ export const SystemCategoryForm = ({
   const handleSubmit = (event: FormEvent<HTMLFormElement>): void => {
     event.preventDefault()
 
+    const isKindChange =
+      isEditMode && initialCategory && initialCategory.kind !== draft.kind
+
     const payload: SystemCategoryPayload = {
       id: draft.id.trim(),
       labelKey: draft.labelKey.trim(),
@@ -80,7 +91,11 @@ export const SystemCategoryForm = ({
       ...(draft.order !== null ? { order: draft.order } : {}),
     }
 
-    onSubmit(payload, mode)
+    const nextPayload = isKindChange
+      ? { ...payload, order: getNextOrderForKind(categories, draft.kind) }
+      : payload
+
+    onSubmit(nextPayload, mode)
   }
 
   const modalTitle = isEditMode

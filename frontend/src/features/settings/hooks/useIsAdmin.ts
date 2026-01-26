@@ -38,7 +38,7 @@ export const useIsAdmin = (): UseIsAdminResult => {
 
     const resolveClaims = async () => {
       try {
-        const tokenResult = await user.getIdTokenResult()
+        const tokenResult = await user.getIdTokenResult(true)
         if (!isMounted) {
           return
         }

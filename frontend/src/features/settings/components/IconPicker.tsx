@@ -135,7 +135,7 @@ export const IconPicker = ({
       onOpenChange={handleOpenChange}
       title={title}
       description={description}
-      contentClassName="max-h-[85vh]"
+      contentClassName="max-h-[80vh]"
       footer={footer}
     >
       <div className="space-y-4">
@@ -158,28 +158,30 @@ export const IconPicker = ({
         ) : filteredIcons.length === 0 ? (
           <p className="text-sm text-muted-foreground">{emptyLabel}</p>
         ) : (
-          <div className="grid grid-cols-4 gap-2 sm:grid-cols-6 md:grid-cols-8">
-            {filteredIcons.map(({ name, Icon }) => {
-              const isSelected = value === name
+          <div className="max-h-[50vh] overflow-y-auto pr-1">
+            <div className="grid grid-cols-4 gap-2 sm:grid-cols-6 md:grid-cols-8">
+              {filteredIcons.map(({ name, Icon }) => {
+                const isSelected = value === name
 
-              return (
-                <button
-                  key={name}
-                  type="button"
-                  aria-label={name}
-                  title={name}
-                  onClick={() => handleSelect(name)}
-                  className={cn(
-                    "flex h-11 w-11 items-center justify-center rounded-md border text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
-                    isSelected
-                      ? "border-primary bg-primary/10 text-primary"
-                      : "border-input hover:bg-muted"
-                  )}
-                >
-                  <Icon className="h-5 w-5" />
-                </button>
-              )
-            })}
+                return (
+                  <button
+                    key={name}
+                    type="button"
+                    aria-label={name}
+                    title={name}
+                    onClick={() => handleSelect(name)}
+                    className={cn(
+                      "flex h-11 w-11 items-center justify-center rounded-md border text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+                      isSelected
+                        ? "border-primary bg-primary/10 text-primary"
+                        : "border-input hover:bg-muted"
+                    )}
+                  >
+                    <Icon className="h-5 w-5" />
+                  </button>
+                )
+              })}
+            </div>
           </div>
         )}
       </div>

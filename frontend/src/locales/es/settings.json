@@ -82,6 +82,33 @@
   },
   "admin": {
     "description": "Sección administrativa.",
+    "tabs": {
+      "expense": "Gasto",
+      "income": "Ingreso"
+    },
+    "actions": {
+      "moveUp": "Subir",
+      "moveDown": "Bajar"
+    },
+    "form": {
+      "iconPicker": "Elegir icono",
+      "iconSearchLabel": "Buscar iconos",
+      "iconSearchPlaceholder": "Busca por nombre",
+      "iconEmpty": "No hay iconos que coincidan.",
+      "iconLoading": "Cargando iconos...",
+      "colorLabel": "Color (opcional)",
+      "colorPlaceholder": "ej. #1F2937",
+      "parentLabel": "Categoría padre (opcional)",
+      "parentPlaceholder": "Selecciona una categoría",
+      "parentNone": "Sin padre",
+      "parentEmpty": "No hay categorías padre disponibles.",
+      "reorderHint": "Usa las flechas para reordenar dentro del tipo."
+    },
+    "confirmDelete": {
+      "title": "Eliminar categoría",
+      "description": "¿Eliminar {{name}}? Esta acción no se puede deshacer.",
+      "confirm": "Eliminar"
+    },
     "systemCategories": {
       "title": "Categorías del sistema",
       "description": "Administra las categorías globales usadas en la app.",
@@ -138,6 +165,7 @@
         "load": "No pudimos cargar las categorías del sistema.",
         "save": "No pudimos guardar la categoría.",
         "delete": "No pudimos eliminar la categoría.",
+        "reorder": "No pudimos reordenar las categorías.",
         "validation": "Completa los campos obligatorios.",
         "invalidOrder": "El orden debe ser un número mayor o igual a 0."
       }

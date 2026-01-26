@@ -34,6 +34,7 @@ const DateKeySchema = z.string().regex(/^\d{4}-\d{2}-\d{2}$/);
 const MonthKeySchema = z.string().regex(/^\d{4}-\d{2}$/);
 
 export const UserDocSchema = z.object({
+  uid: nonEmptyString,
   profile: z.object({
     displayName: nonEmptyString,
     email: nonEmptyString.email(),

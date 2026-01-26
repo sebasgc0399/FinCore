@@ -1,7 +1,5 @@
 import { useEffect, useState } from "react"
-import { doc, onSnapshot } from "firebase/firestore"
 
-import { db } from "@/lib/firebase"
 import { useAuth } from "@/features/auth/hooks/useAuth"
 
 type UseIsAdminResult = {
@@ -9,29 +7,22 @@ type UseIsAdminResult = {
   loading: boolean
 }
 
-type UserDocData = {
-  auth?: {
-    role?: unknown
-  }
-}
-
-type AdminSnapshotState = {
+type AdminClaimState = {
   uid: string | null
   isAdmin: boolean
 }
 
-const getRole = (data: unknown): unknown => {
-  if (typeof data !== "object" || data === null) {
-    return undefined
+const isAdminClaim = (claims: unknown): boolean => {
+  if (typeof claims !== "object" || claims === null) {
+    return false
   }
 
-  const record = data as UserDocData
-  return record.auth?.role
+  return "admin" in claims && (claims as { admin?: unknown }).admin === true
 }
 
 export const useIsAdmin = (): UseIsAdminResult => {
   const { user } = useAuth()
-  const [snapshotState, setSnapshotState] = useState<AdminSnapshotState>({
+  const [claimState, setClaimState] = useState<AdminClaimState>({
     uid: null,
     isAdmin: false,
   })
@@ -45,28 +36,30 @@ export const useIsAdmin = (): UseIsAdminResult => {
       }
     }
 
-    const unsubscribe = onSnapshot(
-      doc(db, "users", user.uid),
-      (snapshot) => {
+    const resolveClaims = async () => {
+      try {
+        const tokenResult = await user.getIdTokenResult()
         if (!isMounted) {
           return
         }
 
-        const role = getRole(snapshot.data())
-        setSnapshotState({ uid: user.uid, isAdmin: role === "admin" })
-      },
-      () => {
+        setClaimState({
+          uid: user.uid,
+          isAdmin: isAdminClaim(tokenResult.claims),
+        })
+      } catch {
         if (!isMounted) {
           return
         }
 
-        setSnapshotState({ uid: user.uid, isAdmin: false })
+        setClaimState({ uid: user.uid, isAdmin: false })
       }
-    )
+    }
+
+    void resolveClaims()
 
     return () => {
       isMounted = false
-      unsubscribe()
     }
   }, [user])
 
@@ -74,8 +67,8 @@ export const useIsAdmin = (): UseIsAdminResult => {
     return { isAdmin: false, loading: false }
   }
 
-  const isAdmin = snapshotState.uid === user.uid && snapshotState.isAdmin
-  const loading = snapshotState.uid !== user.uid
+  const isAdmin = claimState.uid === user.uid && claimState.isAdmin
+  const loading = claimState.uid !== user.uid
 
   return { isAdmin, loading }
 }

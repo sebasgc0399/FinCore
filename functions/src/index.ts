@@ -11,6 +11,16 @@ type SystemCategoryPayload = {
   labelKey: string;
   icon: string;
   kind: CategoryKind;
+  order?: number;
+  color?: string | null;
+  parentId?: string | null;
+};
+
+type SystemCategoryData = {
+  id: string;
+  labelKey: string;
+  icon: string;
+  kind: CategoryKind;
   order: number;
   color?: string | null;
   parentId?: string | null;
@@ -80,6 +90,10 @@ const getRequiredKind = (value: unknown): CategoryKind => {
   throw new HttpsError("invalid-argument", "Invalid kind.");
 };
 
+const isKind = (value: unknown): value is CategoryKind => {
+  return value === "expense" || value === "income";
+};
+
 const getRequiredOrder = (value: unknown): number => {
   if (typeof value === "number" && Number.isInteger(value) && value >= 0) {
     return value;
@@ -88,22 +102,52 @@ const getRequiredOrder = (value: unknown): number => {
   throw new HttpsError("invalid-argument", "Invalid order.");
 };
 
-const parseSystemCategoryPayload = (data: unknown): SystemCategoryPayload => {
+const getOptionalOrder = (value: unknown): number | undefined => {
+  if (value === undefined) {
+    return undefined;
+  }
+
+  return getRequiredOrder(value);
+};
+
+const parseSystemCategoryPayload = (
+  data: unknown,
+  options?: {allowMissingOrder?: boolean}
+): SystemCategoryPayload => {
   const record = getRecord(data);
+  const order = options?.allowMissingOrder ?
+    getOptionalOrder(record.order) :
+    getRequiredOrder(record.order);
 
   return {
     id: getRequiredString(record.id, "id"),
     labelKey: getRequiredString(record.labelKey, "labelKey"),
     icon: getRequiredString(record.icon, "icon"),
     kind: getRequiredKind(record.kind),
-    order: getRequiredOrder(record.order),
+    order,
     color: getOptionalString(record.color, "color"),
     parentId: getOptionalString(record.parentId, "parentId"),
   };
 };
 
+const ensureOrder = (payload: SystemCategoryPayload): SystemCategoryData => {
+  if (payload.order === undefined) {
+    throw new HttpsError("invalid-argument", "Invalid order.");
+  }
+
+  return {
+    id: payload.id,
+    labelKey: payload.labelKey,
+    icon: payload.icon,
+    kind: payload.kind,
+    order: payload.order,
+    color: payload.color,
+    parentId: payload.parentId,
+  };
+};
+
 const buildCategoryData = (
-  payload: SystemCategoryPayload
+  payload: SystemCategoryData
 ): Record<string, unknown> => {
   const data: Record<string, unknown> = {
     labelKey: payload.labelKey,
@@ -121,6 +165,41 @@ const buildCategoryData = (
   }
 
   return data;
+};
+
+const getNextOrder = async (kind: CategoryKind): Promise<number> => {
+  const snapshot = await db
+    .collection("system_categories")
+    .where("kind", "==", kind)
+    .orderBy("order", "desc")
+    .limit(1)
+    .get();
+
+  if (snapshot.empty) {
+    return 0;
+  }
+
+  const lastOrder = snapshot.docs[0]?.data().order;
+  if (typeof lastOrder === "number" && Number.isInteger(lastOrder)) {
+    return lastOrder + 1;
+  }
+
+  return 0;
+};
+
+const getRequiredIdList = (value: unknown): string[] => {
+  if (!Array.isArray(value) || value.length === 0) {
+    throw new HttpsError("invalid-argument", "Invalid orderedIds.");
+  }
+
+  const ids = value.map((entry) => getRequiredString(entry, "orderedIds"));
+  const uniqueIds = new Set(ids);
+
+  if (uniqueIds.size !== ids.length) {
+    throw new HttpsError("invalid-argument", "Invalid orderedIds.");
+  }
+
+  return ids;
 };
 
 export const seedSystemCategories = onCall(async (request) => {
@@ -147,7 +226,9 @@ export const seedSystemCategories = onCall(async (request) => {
 export const createSystemCategory = onCall(async (request) => {
   requireAdmin(request.auth);
 
-  const payload = parseSystemCategoryPayload(request.data);
+  const payload = parseSystemCategoryPayload(request.data, {
+    allowMissingOrder: true,
+  });
   const docRef = db.collection("system_categories").doc(payload.id);
   const existing = await docRef.get();
 
@@ -155,7 +236,10 @@ export const createSystemCategory = onCall(async (request) => {
     throw new HttpsError("already-exists", "Category already exists.");
   }
 
-  await docRef.set(buildCategoryData(payload));
+  const order = payload.order ?? (await getNextOrder(payload.kind));
+  const data = buildCategoryData({...payload, order});
+
+  await docRef.set(data);
 
   return {status: "created"};
 });
@@ -163,7 +247,7 @@ export const createSystemCategory = onCall(async (request) => {
 export const updateSystemCategory = onCall(async (request) => {
   requireAdmin(request.auth);
 
-  const payload = parseSystemCategoryPayload(request.data);
+  const payload = ensureOrder(parseSystemCategoryPayload(request.data));
   const docRef = db.collection("system_categories").doc(payload.id);
 
   await docRef.update(buildCategoryData(payload));
@@ -180,4 +264,34 @@ export const deleteSystemCategory = onCall(async (request) => {
   await db.collection("system_categories").doc(id).delete();
 
   return {status: "deleted"};
+});
+
+export const reorderSystemCategories = onCall(async (request) => {
+  requireAdmin(request.auth);
+
+  const record = getRecord(request.data);
+  const kind = getRequiredKind(record.kind);
+  const orderedIds = getRequiredIdList(record.orderedIds);
+  const categoriesRef = db.collection("system_categories");
+  const refs = orderedIds.map((id) => categoriesRef.doc(id));
+  const snapshots = await db.getAll(...refs);
+
+  const batch = db.batch();
+
+  snapshots.forEach((snapshot, index) => {
+    if (!snapshot.exists) {
+      throw new HttpsError("not-found", "Category not found.");
+    }
+
+    const data = snapshot.data();
+    if (!data || !isKind(data.kind) || data.kind !== kind) {
+      throw new HttpsError("invalid-argument", "Invalid category kind.");
+    }
+
+    batch.update(snapshot.ref, {order: index});
+  });
+
+  await batch.commit();
+
+  return {status: "reordered", count: orderedIds.length};
 });

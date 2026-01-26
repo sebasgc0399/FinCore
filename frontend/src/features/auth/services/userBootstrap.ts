@@ -124,6 +124,7 @@ export const ensureUserDocument = async (user: User): Promise<void> => {
     const theme = getInitialTheme()
 
     const newUserDoc: WithFieldValue<UserDoc> = {
+      uid: user.uid,
       profile: {
         displayName,
         email,

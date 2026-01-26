@@ -82,6 +82,33 @@
   },
   "admin": {
     "description": "Administrative area.",
+    "tabs": {
+      "expense": "Expense",
+      "income": "Income"
+    },
+    "actions": {
+      "moveUp": "Move up",
+      "moveDown": "Move down"
+    },
+    "form": {
+      "iconPicker": "Choose icon",
+      "iconSearchLabel": "Search icons",
+      "iconSearchPlaceholder": "Search by name",
+      "iconEmpty": "No icons match your search.",
+      "iconLoading": "Loading icons...",
+      "colorLabel": "Color (optional)",
+      "colorPlaceholder": "e.g. #1F2937",
+      "parentLabel": "Parent category (optional)",
+      "parentPlaceholder": "Select a parent",
+      "parentNone": "No parent",
+      "parentEmpty": "No parent categories available.",
+      "reorderHint": "Use the arrows to reorder categories within this type."
+    },
+    "confirmDelete": {
+      "title": "Delete category",
+      "description": "Delete {{name}}? This action can't be undone.",
+      "confirm": "Delete"
+    },
     "systemCategories": {
       "title": "System categories",
       "description": "Manage the global categories used across the app.",
@@ -138,6 +165,7 @@
         "load": "We couldn't load system categories.",
         "save": "We couldn't save the category.",
         "delete": "We couldn't delete the category.",
+        "reorder": "We couldn't reorder the categories.",
         "validation": "Please complete all required fields.",
         "invalidOrder": "Order must be a number greater than or equal to 0."
       }

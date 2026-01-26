@@ -24,11 +24,20 @@ service cloud.firestore {
 
     function userDocKeysValid() {
       return request.resource.data.keys().hasOnly([
+        "uid",
         "profile",
         "preferences",
         "auth",
         "metadata"
       ]);
+    }
+
+    function userUidMatchesRequest() {
+      return request.resource.data.uid == request.auth.uid;
+    }
+
+    function userUidUnchanged() {
+      return request.resource.data.uid == resource.data.uid;
     }
 
     function userAuthCreateValid() {
@@ -50,13 +59,15 @@ service cloud.firestore {
     match /users/{uid} {
       allow read: if isOwner(uid) || isAdmin();
 
-      allow create: if isOwner(uid)
-        && userDocKeysValid()
-        && userAuthCreateValid();
+    allow create: if isOwner(uid)
+      && userUidMatchesRequest()
+      && userDocKeysValid()
+      && userAuthCreateValid();
 
-      allow update: if isOwner(uid)
-        && userDocKeysValid()
-        && userAuthUnchanged();
+    allow update: if isOwner(uid)
+      && userUidUnchanged()
+      && userDocKeysValid()
+      && userAuthUnchanged();
 
       allow delete: if false;
 

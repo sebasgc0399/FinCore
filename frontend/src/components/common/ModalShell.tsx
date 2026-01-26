@@ -109,8 +109,8 @@ export const ModalShell = ({
           ref={contentRef}
           tabIndex={-1}
           {...descriptionProps}
-          className={cn(
-            "inset-x-0 bottom-0 top-auto flex w-full max-h-[90vh] flex-col overflow-hidden rounded-t-2xl rounded-b-none border-t pt-4 pb-[env(safe-area-inset-bottom)]",
+        className={cn(
+            "inset-x-0 bottom-0 top-auto flex w-full max-h-[90vh] flex-col overflow-hidden rounded-t-2xl rounded-b-none border-t pt-4 pb-[calc(env(safe-area-inset-bottom)+12px)]",
             mobileContentClassName
           )}
         >
@@ -135,7 +135,7 @@ export const ModalShell = ({
             {children}
           </div>
           {footer ? (
-            <DrawerFooter className={cn("p-0 pt-3", mobileGutterClassName)}>
+            <DrawerFooter className={cn("p-0 pt-3 pb-2", mobileGutterClassName)}>
               {footer}
             </DrawerFooter>
           ) : null}
@@ -159,7 +159,9 @@ export const ModalShell = ({
           ) : null}
         </DialogHeader>
         <div className="min-h-0 flex-1 overflow-y-auto pt-4">{children}</div>
-        {footer ? <DialogFooter className="pt-4">{footer}</DialogFooter> : null}
+        {footer ? (
+          <DialogFooter className="pt-4 pb-2">{footer}</DialogFooter>
+        ) : null}
       </DialogContent>
     </Dialog>
   )

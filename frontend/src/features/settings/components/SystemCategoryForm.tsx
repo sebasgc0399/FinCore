@@ -114,9 +114,9 @@ export const SystemCategoryForm = ({
         description={modalDescription}
         contentClassName="max-h-[85vh]"
         footer={
-          <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+          <div className="flex w-full items-center gap-2">
             <Button
-              className="h-11"
+              className="h-11 flex-1"
               type="button"
               variant="secondary"
               onClick={() => onOpenChange(false)}
@@ -124,7 +124,7 @@ export const SystemCategoryForm = ({
               {t("settings:admin.systemCategories.actions.cancel")}
             </Button>
             <Button
-              className="h-11"
+              className="h-11 flex-1"
               form={formId}
               type="submit"
               disabled={isSaving}

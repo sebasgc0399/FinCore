@@ -1,4 +1,4 @@
-﻿import { useMemo, useState } from "react"
+﻿import { useMemo, useState, type PointerEvent } from "react"
 import { useTranslation } from "react-i18next"
 import { Link, NavLink, Outlet, useLocation } from "react-router-dom"
 import {
@@ -14,7 +14,7 @@ import {
 
 import { cn } from "@/lib/utils"
 import { useSignOut } from "@/features/auth/hooks/useSignOut"
-import { NewExpenseSheet } from "@/features/expenses/components/NewExpenseSheet"
+import { TransactionSheet } from "@/features/expenses/components/TransactionSheet"
 import { Button } from "@/components/ui/button"
 
 type NavItem = {
@@ -81,7 +81,16 @@ export const AppShell = () => {
     void signOut()
   }
 
-  const handleFabClick = (): void => {
+  const handleFabPointerDown = (
+    event: PointerEvent<HTMLButtonElement>
+  ): void => {
+    event.preventDefault()
+    event.stopPropagation()
+
+    if (isNewExpenseOpen) {
+      return
+    }
+
     setIsNewExpenseOpen(true)
   }
 
@@ -129,7 +138,8 @@ export const AppShell = () => {
         <Button
           aria-label={newExpenseLabel}
           className="fixed bottom-20 right-4 z-30 h-12 w-12 rounded-full shadow-lg"
-          onClick={handleFabClick}
+          onPointerDown={handleFabPointerDown}
+          type="button"
           variant="default"
         >
           <Plus className="h-5 w-5" />
@@ -137,7 +147,7 @@ export const AppShell = () => {
         </Button>
       ) : null}
 
-      <NewExpenseSheet
+      <TransactionSheet
         open={isNewExpenseOpen}
         onOpenChange={setIsNewExpenseOpen}
       />

@@ -7,11 +7,62 @@
   },
   "actions": {
     "signOut": "Cerrar sesión",
-    "newExpense": "Nuevo gasto"
+    "newExpense": "Nuevo gasto",
+    "save": "Guardar",
+    "saving": "Guardando..."
   },
   "categories": {
     "other": "Otros",
-    "income": "Ingreso"
+    "income": "Ingreso",
+    "food": "Comida",
+    "transport": "Transporte",
+    "home": "Hogar",
+    "services": "Servicios",
+    "health": "Salud",
+    "entertainment": "Entretenimiento",
+    "shopping": "Compras",
+    "travel": "Viajes",
+    "education": "Educación",
+    "salary": "Salario",
+    "freelance": "Freelance",
+    "gift": "Regalos",
+    "investment": "Inversiones"
+  },
+  "transaction": {
+    "sheetTitle": "Registrar movimiento",
+    "type": {
+      "expense": "Gasto",
+      "income": "Ingreso"
+    },
+    "amountPlaceholder": "0.00",
+    "categoriesLabel": "Categorías",
+    "categoryNone": "Sin categoría",
+    "categoryMore": "Ver más",
+    "detailsExpand": "Agregar detalle",
+    "detailsCollapse": "Ocultar detalle",
+    "noteLabel": "Nota (opcional)",
+    "notePlaceholder": "Agregar nota",
+    "detailsPlaceholder": "Detalle en construcción.",
+    "keypad": {
+      "backspace": "Borrar",
+      "clear": "Borrar todo"
+    },
+    "details": {
+      "dateLabel": "Fecha",
+      "paymentLabel": "Método de pago",
+      "recurringLabel": "Recurrente",
+      "frequencyLabel": "Frecuencia",
+      "payment": {
+        "card": "Tarjeta",
+        "cash": "Efectivo",
+        "transfer": "Transferencia"
+      },
+      "frequency": {
+        "weekly": "Semanal",
+        "monthly": "Mensual",
+        "yearly": "Anual"
+      }
+    }
   },
   "underConstruction": "En construcción."
 }

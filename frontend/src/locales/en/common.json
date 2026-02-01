@@ -7,11 +7,62 @@
   },
   "actions": {
     "signOut": "Sign out",
-    "newExpense": "New expense"
+    "newExpense": "New expense",
+    "save": "Save",
+    "saving": "Saving..."
   },
   "categories": {
     "other": "Other",
-    "income": "Income"
+    "income": "Income",
+    "food": "Food",
+    "transport": "Transport",
+    "home": "Home",
+    "services": "Services",
+    "health": "Health",
+    "entertainment": "Entertainment",
+    "shopping": "Shopping",
+    "travel": "Travel",
+    "education": "Education",
+    "salary": "Salary",
+    "freelance": "Freelance",
+    "gift": "Gifts",
+    "investment": "Investments"
+  },
+  "transaction": {
+    "sheetTitle": "New transaction",
+    "type": {
+      "expense": "Expense",
+      "income": "Income"
+    },
+    "amountPlaceholder": "0.00",
+    "categoriesLabel": "Categories",
+    "categoryNone": "No category",
+    "categoryMore": "See more",
+    "detailsExpand": "Add details",
+    "detailsCollapse": "Hide details",
+    "noteLabel": "Note (optional)",
+    "notePlaceholder": "Add a note",
+    "detailsPlaceholder": "Details under construction.",
+    "keypad": {
+      "backspace": "Backspace",
+      "clear": "Clear all"
+    },
+    "details": {
+      "dateLabel": "Date",
+      "paymentLabel": "Payment method",
+      "recurringLabel": "Recurring",
+      "frequencyLabel": "Frequency",
+      "payment": {
+        "card": "Card",
+        "cash": "Cash",
+        "transfer": "Transfer"
+      },
+      "frequency": {
+        "weekly": "Weekly",
+        "monthly": "Monthly",
+        "yearly": "Yearly"
+      }
+    }
   },
   "underConstruction": "Under construction."
 }

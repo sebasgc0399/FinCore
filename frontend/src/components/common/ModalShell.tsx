@@ -22,7 +22,7 @@ import { useMediaQuery } from "@/hooks/useMediaQuery"
 type ModalShellProps = {
   open: boolean
   onOpenChange: (open: boolean) => void
-  title: string
+  title: ReactNode
   description?: string
   children: ReactNode
   footer?: ReactNode
@@ -49,6 +49,8 @@ export const ModalShell = ({
   const isMobile = useMediaQuery("(max-width: 640px)")
   const mobileContentClassName = contentClassName ?? ""
   const mobileGutterClassName = "px-5"
+  const hasSnapPoints = Boolean(snapPoints?.length)
+  const hasFooter = Boolean(footer)
   const descriptionProps = description
     ? {}
     : { "aria-describedby": undefined }
@@ -100,45 +102,61 @@ export const ModalShell = ({
       <Drawer
         open={open}
         onOpenChange={handleOpenChange}
-        snapPoints={snapPoints}
-        activeSnapPoint={activeSnapPoint}
-        closeThreshold={closeThreshold}
-        setActiveSnapPoint={setActiveSnapPoint}
+        {...(hasSnapPoints
+          ? {
+              snapPoints,
+              activeSnapPoint,
+              closeThreshold,
+              setActiveSnapPoint,
+            }
+          : {})}
       >
         <DrawerContent
           ref={contentRef}
           tabIndex={-1}
           {...descriptionProps}
-        className={cn(
-            "inset-x-0 bottom-0 top-auto flex w-full max-h-[90vh] flex-col overflow-hidden rounded-t-2xl rounded-b-none border-t pt-4 pb-[calc(env(safe-area-inset-bottom)+12px)]",
+          className={cn(
+            "inset-x-0 bottom-0 top-auto w-full rounded-t-2xl rounded-b-none border-t bg-background",
             mobileContentClassName
           )}
         >
           <div
-            className="mx-auto mb-3 h-1.5 w-10 rounded-full bg-muted-foreground/20"
-            aria-hidden="true"
-          />
-          <DrawerHeader
-            className={cn("p-0 text-left", mobileGutterClassName)}
-          >
-            <DrawerTitle>{title}</DrawerTitle>
-            {description ? (
-              <DrawerDescription>{description}</DrawerDescription>
-            ) : null}
-          </DrawerHeader>
-          <div
             className={cn(
-              "min-h-0 flex-1 overflow-y-auto pt-3",
-              mobileGutterClassName
+              "flex w-full max-h-[95dvh] flex-col overflow-hidden pt-4"
             )}
           >
-            {children}
+            <div
+              className="mx-auto mb-3 h-1.5 w-10 rounded-full bg-muted-foreground/20"
+              aria-hidden="true"
+            />
+            <DrawerHeader
+              className={cn("p-0 text-left", mobileGutterClassName)}
+            >
+              <DrawerTitle>{title}</DrawerTitle>
+              {description ? (
+                <DrawerDescription>{description}</DrawerDescription>
+              ) : null}
+            </DrawerHeader>
+            <div
+              className={cn(
+                "min-h-0 flex-1 overflow-y-auto pt-3",
+                !hasFooter && "pb-[calc(env(safe-area-inset-bottom)+12px)]",
+                mobileGutterClassName
+              )}
+            >
+              {children}
+            </div>
+            {footer ? (
+              <DrawerFooter
+                className={cn(
+                  "shrink-0 p-0 pt-3 pb-[calc(env(safe-area-inset-bottom)+12px)]",
+                  mobileGutterClassName
+                )}
+              >
+                {footer}
+              </DrawerFooter>
+            ) : null}
           </div>
-          {footer ? (
-            <DrawerFooter className={cn("p-0 pt-3 pb-2", mobileGutterClassName)}>
-              {footer}
-            </DrawerFooter>
-          ) : null}
         </DrawerContent>
       </Drawer>
     )

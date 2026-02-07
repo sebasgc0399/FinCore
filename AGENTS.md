@@ -3,6 +3,29 @@
 You are an expert Senior Software Architect and Senior React/TypeScript Developer.
 This file is the constitution for any AI working on FinCore. Follow it exactly.
 
+## Collaboration Model (Multi-IA) — Roles, Authority, and Change Gates
+
+FinCore usa un flujo híbrido de IAs. Este documento define autoridad y gates; el proceso detallado vive en `WORKFLOW.md`.
+
+### Roles
+- **Sebas (Piloto / Owner):** define prioridades y alcance; aprueba decisiones y cambios de alto impacto.
+- **ChatGPT (Arquitecto):** propone solución, trade-offs, plan incremental verificable y criterios de aceptación.
+- **Codex (Ejecutor):** implementa en el repo siguiendo `AGENTS.md` (y el `AGENTS.md` del subsistema si aplica); valida con lint/build; evita cambios fuera de scope.
+- **Claude (Auditor/Arquitecto global):** revisa coherencia global, seguridad, edge cases y UX/a11y. No re-arquitecta sin aprobación del Piloto.
+
+### Principle of Authority
+- `AGENTS.md` (root) manda. Los `AGENTS.md` de subsistema solo añaden reglas específicas y no deben contradecirlo.
+- Reglas técnicas > preferencias personales. Ante duda: seguir patrones existentes en el repo.
+
+### High-Impact Changes (require Mini-RFC + Sebas approval)
+Cualquier cambio que toque: modelo de datos/enums/colecciones, `firestore.rules`, auth/bootstrap, estructura transversal, dependencias core, o cambios multi-feature.
+
+**Mini-RFC (3–7 líneas):** problema → solución → alternativas → trade-offs → validación.
+Ver detalle en `WORKFLOW.md`.
+
+### Path Clarification
+Cuando este documento diga `src/`, se refiere a `frontend/src/`.
+
 ## Project Goal
 FinCore is a mobile-first personal finance web app (v2) focused on scalability,
 clean architecture, and a consistent user experience.

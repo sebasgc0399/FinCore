@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button"
 
 import type { SystemCategoryPayload } from "@/features/settings/services/system-categories"
 import type { CategoryDraft, CategoryKind } from "@/features/settings/types/system-category-form"
-import type { SystemCategory } from "@/types/db-schema"
+import type { SystemCategoryEntity } from "@/types/db-schema"
 
 type FormMode = "create" | "edit"
 
@@ -16,16 +16,16 @@ type SystemCategoryFormProps = {
   open: boolean
   onOpenChange: (open: boolean) => void
   mode: FormMode
-  initialCategory: SystemCategory | null
+  initialCategory: SystemCategoryEntity | null
   activeKind: CategoryKind
-  categories: SystemCategory[]
+  categories: SystemCategoryEntity[]
   isSaving: boolean
   errorMessage: string | null
   onSubmit: (payload: SystemCategoryPayload, mode: FormMode) => void
 }
 
 const buildDraft = (
-  initialCategory: SystemCategory | null,
+  initialCategory: SystemCategoryEntity | null,
   activeKind: CategoryKind
 ): CategoryDraft => ({
   id: initialCategory?.id ?? "",
@@ -38,7 +38,7 @@ const buildDraft = (
 })
 
 const getNextOrderForKind = (
-  categories: SystemCategory[],
+  categories: SystemCategoryEntity[],
   kind: CategoryKind
 ): number =>
   categories

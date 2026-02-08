@@ -15,6 +15,7 @@ import type {
   TransactionCategory,
   TransactionKind,
 } from "@/features/expenses/types/transaction"
+import type { PaymentMethod, TemplateFrequency } from "@/types/db-schema"
 
 type TransactionSheetProps = {
   open: boolean
@@ -50,8 +51,8 @@ const RECENT_CATEGORY_IDS = [
   "freelance",
 ]
 
-const DEFAULT_PAYMENT_METHOD = "card"
-const DEFAULT_FREQUENCY = "monthly"
+const DEFAULT_PAYMENT_METHOD: PaymentMethod = "cash"
+const DEFAULT_FREQUENCY: TemplateFrequency = "monthly"
 
 const getToday = (): string => {
   const now = new Date()
@@ -83,9 +84,10 @@ export const TransactionSheet = ({
   const [note, setNote] = useState("")
   const [detailsOpen, setDetailsOpen] = useState(false)
   const [date, setDate] = useState(getToday)
-  const [paymentMethod, setPaymentMethod] = useState(DEFAULT_PAYMENT_METHOD)
+  const [paymentMethod, setPaymentMethod] =
+    useState<PaymentMethod>(DEFAULT_PAYMENT_METHOD)
   const [recurring, setRecurring] = useState(false)
-  const [frequency, setFrequency] = useState(DEFAULT_FREQUENCY)
+  const [frequency, setFrequency] = useState<TemplateFrequency>(DEFAULT_FREQUENCY)
   const [isSaving, setIsSaving] = useState(false)
 
   const accentTextClasses =

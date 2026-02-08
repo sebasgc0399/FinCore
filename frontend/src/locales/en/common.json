@@ -53,13 +53,19 @@
       "recurringLabel": "Recurring",
       "frequencyLabel": "Frequency",
       "payment": {
-        "card": "Card",
         "cash": "Cash",
-        "transfer": "Transfer"
+        "debit_card": "Debit card",
+        "credit_card": "Credit card",
+        "bank_transfer": "Bank transfer",
+        "digital_wallet": "Digital wallet",
+        "other": "Other"
       },
       "frequency": {
+        "daily": "Daily",
         "weekly": "Weekly",
+        "biweekly": "Biweekly",
         "monthly": "Monthly",
+        "quarterly": "Quarterly",
         "yearly": "Yearly"
       }
     }

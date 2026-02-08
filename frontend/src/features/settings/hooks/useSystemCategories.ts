@@ -5,20 +5,23 @@ import {
   reorderSystemCategories,
 } from "@/features/settings/services/system-categories"
 import type { CategoryKind } from "@/features/settings/types/system-category-form"
-import type { SystemCategory } from "@/types/db-schema"
+import type { SystemCategoryEntity } from "@/types/db-schema"
 
 type ReorderDirection = "up" | "down"
 
 type UseSystemCategoriesResult = {
-  sortedCategories: SystemCategory[]
-  filteredCategories: SystemCategory[]
+  sortedCategories: SystemCategoryEntity[]
+  filteredCategories: SystemCategoryEntity[]
   loading: boolean
   loadError: boolean
   isReordering: boolean
   reorder: (categoryId: string, direction: ReorderDirection) => Promise<boolean>
 }
 
-const sortCategories = (a: SystemCategory, b: SystemCategory): number => {
+const sortCategories = (
+  a: SystemCategoryEntity,
+  b: SystemCategoryEntity
+): number => {
   const orderDelta = a.order - b.order
   if (orderDelta !== 0) {
     return orderDelta
@@ -35,7 +38,7 @@ const sortCategories = (a: SystemCategory, b: SystemCategory): number => {
 export const useSystemCategories = (
   activeKind: CategoryKind
 ): UseSystemCategoriesResult => {
-  const [categories, setCategories] = useState<SystemCategory[]>([])
+  const [categories, setCategories] = useState<SystemCategoryEntity[]>([])
   const [loading, setLoading] = useState(true)
   const [loadError, setLoadError] = useState(false)
   const [isReordering, setIsReordering] = useState(false)

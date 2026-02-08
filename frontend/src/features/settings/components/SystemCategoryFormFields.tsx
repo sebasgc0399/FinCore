@@ -12,13 +12,13 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 
 import type { CategoryDraft } from "@/features/settings/types/system-category-form"
-import type { SystemCategory } from "@/types/db-schema"
+import type { SystemCategoryEntity } from "@/types/db-schema"
 
 type SystemCategoryFormFieldsProps = {
   formId: string
   draft: CategoryDraft
   isEditMode: boolean
-  categories: SystemCategory[]
+  categories: SystemCategoryEntity[]
   iconPickerOpen: boolean
   onIconPickerOpenChange: (open: boolean) => void
   onDraftChange: (updates: Partial<CategoryDraft>) => void

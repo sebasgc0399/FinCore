@@ -14,21 +14,47 @@ service cloud.firestore {
       return isSignedIn() && request.auth.token.admin == true;
     }
 
-    function userIdMatchesRequest() {
-      return request.resource.data.userId == request.auth.uid;
+    function validDateKey(value) {
+      return value is string && value.matches('^\\d{4}-\\d{2}-\\d{2}$');
     }
 
-    function userIdUnchanged() {
-      return request.resource.data.userId == resource.data.userId;
+    function validMonthKey(value) {
+      return value is string && value.matches('^\\d{4}-\\d{2}$');
+    }
+
+    function validTransactionType(value) {
+      return value in ['expense', 'income'];
+    }
+
+    function validPaymentMethod(value) {
+      return value in [
+        'cash',
+        'debit_card',
+        'credit_card',
+        'bank_transfer',
+        'digital_wallet',
+        'other'
+      ];
+    }
+
+    function validTemplateFrequency(value) {
+      return value in [
+        'daily',
+        'weekly',
+        'biweekly',
+        'monthly',
+        'quarterly',
+        'yearly'
+      ];
     }
 
     function userDocKeysValid() {
       return request.resource.data.keys().hasOnly([
-        "uid",
-        "profile",
-        "preferences",
-        "auth",
-        "metadata"
+        'uid',
+        'profile',
+        'preferences',
+        'auth',
+        'metadata'
       ]);
     }
 
@@ -41,14 +67,218 @@ service cloud.firestore {
     }
 
     function userAuthCreateValid() {
-      return request.resource.data.auth.role == "free"
+      return request.resource.data.auth.role == 'free'
         && request.resource.data.auth.openaiKeyStored == false
-        && request.resource.data.auth.subscription.status == "expired"
-        && request.resource.data.auth.subscription.source == "manual";
+        && request.resource.data.auth.subscription.status == 'expired'
+        && request.resource.data.auth.subscription.source == 'manual';
     }
 
     function userAuthUnchanged() {
       return request.resource.data.auth == resource.data.auth;
+    }
+
+    function customCategoryValid() {
+      return request.resource.data.keys().hasOnly([
+          'label',
+          'icon',
+          'color',
+          'kind',
+          'order',
+          'isArchived',
+          'parentId'
+        ])
+        && request.resource.data.label is string
+        && request.resource.data.icon is string
+        && validTransactionType(request.resource.data.kind)
+        && request.resource.data.order is int
+        && request.resource.data.order >= 0
+        && request.resource.data.isArchived is bool
+        && (!('color' in request.resource.data) || request.resource.data.color is string)
+        && (!('parentId' in request.resource.data)
+          || request.resource.data.parentId == null
+          || request.resource.data.parentId is string);
+    }
+
+    function transactionSnapshotValid() {
+      return !('categorySnapshot' in request.resource.data)
+        || (
+          request.resource.data.categorySnapshot is map
+          && request.resource.data.categorySnapshot.keys().hasOnly([
+            'label',
+            'icon',
+            'color'
+          ])
+          && request.resource.data.categorySnapshot.label is string
+          && request.resource.data.categorySnapshot.icon is string
+          && (
+            !('color' in request.resource.data.categorySnapshot)
+            || request.resource.data.categorySnapshot.color is string
+          )
+        );
+    }
+
+    function transactionValid() {
+      return request.resource.data.keys().hasOnly([
+          'amountCents',
+          'type',
+          'date',
+          'dateKey',
+          'monthKey',
+          'categoryId',
+          'paymentMethod',
+          'note',
+          'tags',
+          'source',
+          'createdAt',
+          'updatedAt',
+          'categorySnapshot'
+        ])
+        && request.resource.data.amountCents is int
+        && request.resource.data.amountCents >= 0
+        && validTransactionType(request.resource.data.type)
+        && request.resource.data.date is timestamp
+        && validDateKey(request.resource.data.dateKey)
+        && validMonthKey(request.resource.data.monthKey)
+        && request.resource.data.categoryId is string
+        && validPaymentMethod(request.resource.data.paymentMethod)
+        && (!('note' in request.resource.data) || request.resource.data.note is string)
+        && (!('tags' in request.resource.data) || request.resource.data.tags is list)
+        && request.resource.data.source in ['manual', 'ai', 'template', 'recurring', 'import']
+        && request.resource.data.createdAt is timestamp
+        && request.resource.data.updatedAt is timestamp
+        && transactionSnapshotValid();
+    }
+
+    function transactionUpdateValid() {
+      return transactionValid()
+        && request.resource.data.date == resource.data.date
+        && request.resource.data.dateKey == resource.data.dateKey
+        && request.resource.data.monthKey == resource.data.monthKey
+        && request.resource.data.createdAt == resource.data.createdAt;
+    }
+
+    function templateScheduleValid(schedule) {
+      return schedule == null
+        || (
+          schedule is map
+          && schedule.keys().hasOnly(['frequency', 'nextRunAt', 'lastRunAt'])
+          && validTemplateFrequency(schedule.frequency)
+          && schedule.nextRunAt is timestamp
+          && (!('lastRunAt' in schedule)
+            || schedule.lastRunAt == null
+            || schedule.lastRunAt is timestamp)
+        );
+    }
+
+    function templateValid() {
+      return request.resource.data.keys().hasOnly([
+          'name',
+          'amountCents',
+          'categoryId',
+          'paymentMethod',
+          'note',
+          'type',
+          'schedule',
+          'createdAt',
+          'updatedAt'
+        ])
+        && request.resource.data.name is string
+        && (!('amountCents' in request.resource.data)
+          || (request.resource.data.amountCents is int && request.resource.data.amountCents >= 0))
+        && (!('categoryId' in request.resource.data)
+          || request.resource.data.categoryId is string)
+        && (!('paymentMethod' in request.resource.data)
+          || validPaymentMethod(request.resource.data.paymentMethod))
+        && (!('note' in request.resource.data) || request.resource.data.note is string)
+        && (!('type' in request.resource.data)
+          || validTransactionType(request.resource.data.type))
+        && ('schedule' in request.resource.data)
+        && templateScheduleValid(request.resource.data.schedule)
+        && request.resource.data.createdAt is timestamp
+        && request.resource.data.updatedAt is timestamp;
+    }
+
+    function budgetValid(budgetId) {
+      return request.resource.data.keys().hasOnly([
+          'monthKey',
+          'totalLimitCents',
+          'categoryLimitsCents',
+          'updatedAt',
+          'spentCents',
+          'categorySpentCents'
+        ])
+        && validMonthKey(budgetId)
+        && request.resource.data.monthKey == budgetId
+        && request.resource.data.totalLimitCents is int
+        && request.resource.data.totalLimitCents >= 0
+        && request.resource.data.categoryLimitsCents is map
+        && request.resource.data.updatedAt is timestamp
+        && (!('spentCents' in request.resource.data)
+          || (request.resource.data.spentCents is int && request.resource.data.spentCents >= 0))
+        && (!('categorySpentCents' in request.resource.data)
+          || request.resource.data.categorySpentCents is map);
+    }
+
+    function objectiveValid() {
+      return request.resource.data.keys().hasOnly([
+          'type',
+          'name',
+          'targetAmountCents',
+          'currentAmountCents',
+          'status',
+          'deadline',
+          'createdAt',
+          'updatedAt'
+        ])
+        && request.resource.data.type in ['goal', 'debt']
+        && request.resource.data.name is string
+        && request.resource.data.targetAmountCents is int
+        && request.resource.data.targetAmountCents >= 0
+        && request.resource.data.currentAmountCents is int
+        && request.resource.data.currentAmountCents >= 0
+        && request.resource.data.status in ['active', 'completed', 'archived']
+        && (!('deadline' in request.resource.data)
+          || request.resource.data.deadline is timestamp)
+        && request.resource.data.createdAt is timestamp
+        && request.resource.data.updatedAt is timestamp;
+    }
+
+    function objectiveEntryValid() {
+      return request.resource.data.keys().hasOnly([
+          'amountCents',
+          'kind',
+          'note',
+          'effectiveDate',
+          'createdAt',
+          'linkedTransactionId'
+        ])
+        && request.resource.data.amountCents is int
+        && request.resource.data.amountCents >= 0
+        && request.resource.data.kind in ['deposit', 'withdraw', 'payment']
+        && (!('note' in request.resource.data) || request.resource.data.note is string)
+        && (!('effectiveDate' in request.resource.data)
+          || request.resource.data.effectiveDate is timestamp)
+        && request.resource.data.createdAt is timestamp
+        && (!('linkedTransactionId' in request.resource.data)
+          || request.resource.data.linkedTransactionId == null
+          || request.resource.data.linkedTransactionId is string);
+    }
+
+    function usageWeekValid(weekKey) {
+      return request.resource.data.keys().hasOnly([
+          'weekKey',
+          'parse',
+          'analyze',
+          'updatedAt'
+        ])
+        && validDateKey(weekKey)
+        && request.resource.data.weekKey == weekKey
+        && (!('parse' in request.resource.data)
+          || (request.resource.data.parse is int && request.resource.data.parse >= 0))
+        && (!('analyze' in request.resource.data)
+          || (request.resource.data.analyze is int && request.resource.data.analyze >= 0))
+        && (!('updatedAt' in request.resource.data)
+          || request.resource.data.updatedAt is timestamp);
     }
 
     match /system_categories/{categoryId} {
@@ -59,25 +289,53 @@ service cloud.firestore {
     match /users/{uid} {
       allow read: if isOwner(uid) || isAdmin();
 
-    allow create: if isOwner(uid)
-      && userUidMatchesRequest()
-      && userDocKeysValid()
-      && userAuthCreateValid();
+      allow create: if isOwner(uid)
+        && userUidMatchesRequest()
+        && userDocKeysValid()
+        && userAuthCreateValid();
 
-    allow update: if isOwner(uid)
-      && userUidUnchanged()
-      && userDocKeysValid()
-      && userAuthUnchanged();
+      allow update: if isOwner(uid)
+        && userUidUnchanged()
+        && userDocKeysValid()
+        && userAuthUnchanged();
 
       allow delete: if false;
 
       match /custom_categories/{categoryId} {
         allow read: if isOwner(uid);
-        allow create, update: if isOwner(uid)
-          && request.resource.data.label is string
-          && request.resource.data.icon is string
-          && request.resource.data.kind in ["expense", "income"];
+        allow create, update: if isOwner(uid) && customCategoryValid();
         allow delete: if isOwner(uid);
+      }
+
+      match /transactions/{transactionId} {
+        allow read: if isOwner(uid);
+        allow create: if isOwner(uid) && transactionValid();
+        allow update: if isOwner(uid) && transactionUpdateValid();
+        allow delete: if isOwner(uid);
+      }
+
+      match /templates/{templateId} {
+        allow read: if isOwner(uid);
+        allow create, update: if isOwner(uid) && templateValid();
+        allow delete: if isOwner(uid);
+      }
+
+      match /budgets/{budgetId} {
+        allow read: if isOwner(uid);
+        allow create, update: if isOwner(uid) && budgetValid(budgetId);
+        allow delete: if isOwner(uid);
+      }
+
+      match /objectives/{objectiveId} {
+        allow read: if isOwner(uid);
+        allow create, update: if isOwner(uid) && objectiveValid();
+        allow delete: if isOwner(uid);
+
+        match /entries/{entryId} {
+          allow read: if isOwner(uid);
+          allow create, update: if isOwner(uid) && objectiveEntryValid();
+          allow delete: if isOwner(uid);
+        }
       }
 
       match /advisorChats/{sessionId} {
@@ -88,66 +346,53 @@ service cloud.firestore {
         }
       }
 
+      match /usageWeeks/{weekKey} {
+        allow read: if isOwner(uid) || isAdmin();
+        allow create, update: if isOwner(uid) && usageWeekValid(weekKey);
+        allow delete: if isOwner(uid);
+      }
+
+      // Legacy path explicitly deprecated
       match /advisor_sessions/{sessionId} {
-        allow read, write: if isOwner(uid);
+        allow read, write: if false;
 
         match /messages/{messageId} {
-          allow read, write: if isOwner(uid);
+          allow read, write: if false;
         }
       }
     }
 
+    // Legacy root collections denied after vNext cutover
     match /transactions/{transactionId} {
-      allow read: if isSignedIn() && resource.data.userId == request.auth.uid;
-      allow create: if isSignedIn() && userIdMatchesRequest();
-      allow update: if isSignedIn() && userIdUnchanged();
-      allow delete: if isSignedIn() && resource.data.userId == request.auth.uid;
+      allow read, write: if false;
     }
 
     match /templates/{templateId} {
-      allow read: if isSignedIn() && resource.data.userId == request.auth.uid;
-      allow create: if isSignedIn() && userIdMatchesRequest();
-      allow update: if isSignedIn() && userIdUnchanged();
-      allow delete: if isSignedIn() && resource.data.userId == request.auth.uid;
+      allow read, write: if false;
     }
 
     match /budgets/{budgetId} {
-      allow read: if isSignedIn() && resource.data.userId == request.auth.uid;
-      allow create: if isSignedIn() && userIdMatchesRequest();
-      allow update: if isSignedIn() && userIdUnchanged();
-      allow delete: if isSignedIn() && resource.data.userId == request.auth.uid;
+      allow read, write: if false;
     }
 
     match /objectives/{objectiveId} {
-      allow read: if isSignedIn() && resource.data.userId == request.auth.uid;
-      allow create: if isSignedIn() && userIdMatchesRequest();
-      allow update: if isSignedIn() && userIdUnchanged();
-      allow delete: if isSignedIn() && resource.data.userId == request.auth.uid;
+      allow read, write: if false;
 
       match /entries/{entryId} {
-        allow read: if isSignedIn()
-          && get(/databases/$(database)/documents/objectives/$(objectiveId)).data.userId == request.auth.uid;
-        allow create, update: if isSignedIn()
-          && userIdMatchesRequest()
-          && get(/databases/$(database)/documents/objectives/$(objectiveId)).data.userId == request.auth.uid;
-        allow delete: if isSignedIn()
-          && get(/databases/$(database)/documents/objectives/$(objectiveId)).data.userId == request.auth.uid;
+        allow read, write: if false;
       }
     }
 
     match /usage/{uid} {
-      allow read: if isOwner(uid) || isAdmin();
-      allow write: if false;
+      allow read, write: if false;
     }
 
     match /advisorFreeChatUsage/{uid} {
-      allow read: if isOwner(uid) || isAdmin();
-      allow write: if false;
+      allow read, write: if false;
     }
 
     match /importTransactionsUsage/{uid} {
-      allow read: if isOwner(uid) || isAdmin();
-      allow write: if false;
+      allow read, write: if false;
     }
 
     match /payments/{paymentId} {

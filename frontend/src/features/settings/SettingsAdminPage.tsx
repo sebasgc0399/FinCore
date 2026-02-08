@@ -13,7 +13,7 @@ import {
 
 import type { SystemCategoryPayload } from "@/features/settings/services/system-categories"
 import type { CategoryKind } from "@/features/settings/types/system-category-form"
-import type { SystemCategory } from "@/types/db-schema"
+import type { SystemCategoryEntity } from "@/types/db-schema"
 
 type FormMode = "create" | "edit"
 
@@ -29,10 +29,12 @@ export const SettingsAdminPage = () => {
   const [formMode, setFormMode] = useState<FormMode>("create")
   const [formSeed, setFormSeed] = useState(0)
   const [editingCategory, setEditingCategory] =
-    useState<SystemCategory | null>(null)
+    useState<SystemCategoryEntity | null>(null)
   const [activeKind, setActiveKind] = useState<CategoryKind>("expense")
   const [isSaving, setIsSaving] = useState(false)
-  const [pendingDelete, setPendingDelete] = useState<SystemCategory | null>(null)
+  const [pendingDelete, setPendingDelete] = useState<SystemCategoryEntity | null>(
+    null
+  )
   const [isDeleting, setIsDeleting] = useState(false)
   const {
     sortedCategories,
@@ -65,7 +67,7 @@ export const SettingsAdminPage = () => {
     setFormOpen(true)
   }
 
-  const openEditForm = (category: SystemCategory): void => {
+  const openEditForm = (category: SystemCategoryEntity): void => {
     setFormMode("edit")
     setEditingCategory(category)
     setFormError(null)

@@ -14,18 +14,18 @@ import {
 } from "@/components/ui/card"
 
 import type { CategoryKind } from "@/features/settings/types/system-category-form"
-import type { SystemCategory } from "@/types/db-schema"
+import type { SystemCategoryEntity } from "@/types/db-schema"
 
 type SystemCategoryListProps = {
-  categories: SystemCategory[]
+  categories: SystemCategoryEntity[]
   activeKind: CategoryKind
   loading: boolean
   loadError: boolean
   actionErrorMessage: string | null
   isReordering: boolean
   onCreate: () => void
-  onEdit: (category: SystemCategory) => void
-  onDelete: (category: SystemCategory) => void
+  onEdit: (category: SystemCategoryEntity) => void
+  onDelete: (category: SystemCategoryEntity) => void
   onReorder: (categoryId: string, direction: "up" | "down") => void
   onKindChange: (kind: CategoryKind) => void
 }

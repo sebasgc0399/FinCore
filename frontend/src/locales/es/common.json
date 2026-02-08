@@ -53,13 +53,19 @@
       "recurringLabel": "Recurrente",
       "frequencyLabel": "Frecuencia",
       "payment": {
-        "card": "Tarjeta",
         "cash": "Efectivo",
-        "transfer": "Transferencia"
+        "debit_card": "Tarjeta débito",
+        "credit_card": "Tarjeta crédito",
+        "bank_transfer": "Transferencia bancaria",
+        "digital_wallet": "Billetera digital",
+        "other": "Otro"
       },
       "frequency": {
+        "daily": "Diaria",
         "weekly": "Semanal",
+        "biweekly": "Quincenal",
         "monthly": "Mensual",
+        "quarterly": "Trimestral",
         "yearly": "Anual"
       }
     }

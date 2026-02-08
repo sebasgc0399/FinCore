@@ -14,6 +14,7 @@ import {
 } from "firebase/firestore"
 
 import { db } from "@/lib/firebase"
+import { i18n } from "@/lib/i18n"
 import type { UserDoc } from "@/types/db-schema"
 
 type ThemePreference = UserDoc["preferences"]["themeMode"]
@@ -21,6 +22,11 @@ type ThemeValue = UserDoc["preferences"]["theme"]
 type LanguageCode = UserDoc["preferences"]["language"]
 
 const SUPPORTED_LANGUAGES = ["es", "en"] as const
+
+const t = (key: string, defaultValue: string): string => {
+  const translated = i18n.t(key)
+  return translated === key ? defaultValue : translated
+}
 
 const normalizeLanguage = (
   value: string | null | undefined
@@ -59,7 +65,12 @@ const getUserEmail = (user: User): string => {
     return providerEmail
   }
 
-  throw new Error("No pudimos obtener el correo del usuario.")
+  throw new Error(
+    t(
+      "auth:bootstrap.errors.missingEmail",
+      "No pudimos obtener el correo del usuario."
+    )
+  )
 }
 
 const getDisplayName = (user: User, email: string): string => {
@@ -72,7 +83,7 @@ const getDisplayName = (user: User, email: string): string => {
     return email
   }
 
-  return "Usuario"
+  return t("auth:bootstrap.fallbackDisplayName", "Usuario")
 }
 
 const toError = (error: unknown): Error => {
@@ -80,7 +91,12 @@ const toError = (error: unknown): Error => {
     return error
   }
 
-  return new Error("Ocurrio un error inesperado durante el bootstrap.")
+  return new Error(
+    t(
+      "auth:bootstrap.errors.unexpected",
+      "Ocurrio un error inesperado durante el bootstrap."
+    )
+  )
 }
 
 export const getInitialLanguage = (): LanguageCode => {
@@ -175,14 +191,14 @@ export const seedDefaultCustomCategories = async (uid: string): Promise<void> =>
 
     batch.set(expenseRef, {
       kind: "expense",
-      label: "Otros",
+      label: t("auth:bootstrap.defaultCategories.expense", "Otros"),
       icon: "Tag",
       order: 0,
       isArchived: false,
     })
     batch.set(incomeRef, {
       kind: "income",
-      label: "Ingreso",
+      label: t("auth:bootstrap.defaultCategories.income", "Ingreso"),
       icon: "Wallet",
       order: 1,
       isArchived: false,

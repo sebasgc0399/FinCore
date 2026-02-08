@@ -5,10 +5,10 @@ import { resolveCategoryLabel } from "@/lib/resolve-category-label"
 import { ModalShell } from "@/components/common/ModalShell"
 import { Button } from "@/components/ui/button"
 
-import type { SystemCategory } from "@/types/db-schema"
+import type { SystemCategoryEntity } from "@/types/db-schema"
 
 type SystemCategoryDeleteModalProps = {
-  category: SystemCategory | null
+  category: SystemCategoryEntity | null
   open: boolean
   isDeleting: boolean
   onClose: () => void

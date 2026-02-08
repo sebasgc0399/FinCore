@@ -1,6 +1,6 @@
-import type { SystemCategory } from "@/types/db-schema"
+import type { SystemCategoryEntity } from "@/types/db-schema"
 
-export type CategoryKind = SystemCategory["kind"]
+export type CategoryKind = SystemCategoryEntity["kind"]
 
 export type CategoryDraft = {
   id: string

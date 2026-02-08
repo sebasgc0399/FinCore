@@ -1,4 +1,14 @@
-export const systemCategories = [
+﻿type SystemCategorySeed = {
+  id: string;
+  labelKey: string;
+  icon: string;
+  kind: "expense" | "income";
+  order: number;
+  color?: string | null;
+  parentId?: string | null;
+};
+
+export const systemCategories: readonly SystemCategorySeed[] = [
   {
     id: "otros",
     labelKey: "categories.other",
@@ -13,4 +23,4 @@ export const systemCategories = [
     kind: "income",
     order: 1,
   },
-] as const;
+];

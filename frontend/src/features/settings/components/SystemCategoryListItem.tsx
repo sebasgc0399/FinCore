@@ -5,16 +5,16 @@ import { resolveCategoryLabel } from "@/lib/resolve-category-label"
 
 import { Button } from "@/components/ui/button"
 
-import type { SystemCategory } from "@/types/db-schema"
+import type { SystemCategoryEntity } from "@/types/db-schema"
 
 type SystemCategoryListItemProps = {
-  category: SystemCategory
+  category: SystemCategoryEntity
   index: number
   total: number
   parentLabel: string | null
   isReordering: boolean
-  onEdit: (category: SystemCategory) => void
-  onDelete: (category: SystemCategory) => void
+  onEdit: (category: SystemCategoryEntity) => void
+  onDelete: (category: SystemCategoryEntity) => void
   onReorder: (categoryId: string, direction: "up" | "down") => void
 }
 

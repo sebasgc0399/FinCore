@@ -8,9 +8,9 @@ import {
 import { getFunctions, httpsCallable } from "firebase/functions"
 
 import { app, db } from "@/lib/firebase"
-import type { SystemCategory } from "@/types/db-schema"
+import type { SystemCategoryEntity } from "@/types/db-schema"
 
-type CategoryKind = SystemCategory["kind"]
+type CategoryKind = SystemCategoryEntity["kind"]
 
 export type SystemCategoryPayload = {
   id: string
@@ -61,9 +61,9 @@ const getOrder = (value: unknown): number | null => {
 
 const normalizeCategory = (
   snapshot: QueryDocumentSnapshot<DocumentData>
-): SystemCategory | null => {
+): SystemCategoryEntity | null => {
   const data = snapshot.data()
-  const id = isNonEmptyString(data.id) ? data.id.trim() : snapshot.id
+  const id = snapshot.id
   const labelKey = getOptionalString(data.labelKey)
   const icon = getOptionalString(data.icon)
   const kind = isKind(data.kind) ? data.kind : null
@@ -107,7 +107,7 @@ const reorderSystemCategoriesCallable = httpsCallable<
 >(functions, "reorderSystemCategories")
 
 export const listenSystemCategories = (
-  onChange: (categories: SystemCategory[]) => void,
+  onChange: (categories: SystemCategoryEntity[]) => void,
   onError?: (error: Error) => void
 ): Unsubscribe => {
   return onSnapshot(
@@ -115,7 +115,9 @@ export const listenSystemCategories = (
     (snapshot) => {
       const categories = snapshot.docs
         .map(normalizeCategory)
-        .filter((category): category is SystemCategory => Boolean(category))
+        .filter(
+          (category): category is SystemCategoryEntity => Boolean(category)
+        )
 
       onChange(categories)
     },

@@ -4,21 +4,47 @@ import { useTranslation } from "react-i18next"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Switch } from "@/components/ui/switch"
+import type {
+  PaymentMethod,
+  TemplateFrequency,
+} from "@/types/db-schema"
 
 type TransactionDetailsProps = {
   open: boolean
   date: string
   onDateChange: (value: string) => void
-  paymentMethod: string
-  onPaymentMethodChange: (value: string) => void
+  paymentMethod: PaymentMethod
+  onPaymentMethodChange: (value: PaymentMethod) => void
   recurring: boolean
   onRecurringChange: (value: boolean) => void
-  frequency: string
-  onFrequencyChange: (value: string) => void
+  frequency: TemplateFrequency
+  onFrequencyChange: (value: TemplateFrequency) => void
 }
 
-const PAYMENT_METHODS = ["card", "cash", "transfer"] as const
-const FREQUENCIES = ["weekly", "monthly", "yearly"] as const
+const PAYMENT_METHODS: readonly PaymentMethod[] = [
+  "cash",
+  "debit_card",
+  "credit_card",
+  "bank_transfer",
+  "digital_wallet",
+  "other",
+]
+const FREQUENCIES: readonly TemplateFrequency[] = [
+  "daily",
+  "weekly",
+  "biweekly",
+  "monthly",
+  "quarterly",
+  "yearly",
+]
+
+const isPaymentMethod = (value: string): value is PaymentMethod => {
+  return PAYMENT_METHODS.includes(value as PaymentMethod)
+}
+
+const isTemplateFrequency = (value: string): value is TemplateFrequency => {
+  return FREQUENCIES.includes(value as TemplateFrequency)
+}
 
 export const TransactionDetails = ({
   open,
@@ -77,7 +103,12 @@ export const TransactionDetails = ({
           id="transaction-payment"
           className="h-11 w-full rounded-md border border-input bg-background px-3 text-sm shadow-sm"
           value={paymentMethod}
-          onChange={(event) => onPaymentMethodChange(event.target.value)}
+          onChange={(event) => {
+            const value = event.target.value
+            if (isPaymentMethod(value)) {
+              onPaymentMethodChange(value)
+            }
+          }}
         >
           {paymentOptions.map((option) => (
             <option key={option.value} value={option.value}>
@@ -107,7 +138,12 @@ export const TransactionDetails = ({
             id="transaction-frequency"
             className="h-11 w-full rounded-md border border-input bg-background px-3 text-sm shadow-sm"
             value={frequency}
-            onChange={(event) => onFrequencyChange(event.target.value)}
+            onChange={(event) => {
+              const value = event.target.value
+              if (isTemplateFrequency(value)) {
+                onFrequencyChange(value)
+              }
+            }}
           >
             {frequencyOptions.map((option) => (
               <option key={option.value} value={option.value}>

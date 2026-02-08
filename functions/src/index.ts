@@ -215,7 +215,18 @@ export const seedSystemCategories = onCall(async (request) => {
   const batch = db.batch();
 
   systemCategories.forEach((category) => {
-    batch.set(categoriesRef.doc(category.id), category);
+    batch.set(
+      categoriesRef.doc(category.id),
+      buildCategoryData({
+        id: category.id,
+        labelKey: category.labelKey,
+        icon: category.icon,
+        kind: category.kind,
+        order: category.order,
+        color: category.color,
+        parentId: category.parentId,
+      })
+    );
   });
 
   await batch.commit();

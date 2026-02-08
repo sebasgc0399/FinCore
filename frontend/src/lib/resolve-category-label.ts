@@ -1,8 +1,11 @@
 import type { TFunction } from "i18next"
 
-import type { SystemCategory, UserCategory } from "@/types/db-schema"
+import type {
+  SystemCategoryEntity,
+  UserCategoryEntity,
+} from "@/types/db-schema"
 
-type Category = SystemCategory | UserCategory
+type Category = SystemCategoryEntity | UserCategoryEntity
 
 export const resolveCategoryLabel = (
   category: Category,

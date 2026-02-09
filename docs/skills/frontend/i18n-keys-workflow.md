@@ -77,7 +77,7 @@ t("greeting", { name: user.displayName })
 - [ ] No hay keys dinámicas sueltas (`t(var)`) — solo mapas `as const`
 
 ## Edge cases
-- **Gap `fincore_lang`:** la detección actual usa solo `navigator`; la regla dice localStorage `fincore_lang` con fallback. Corregir esto es **High-Impact** (requiere mini-RFC + aprobación de Sebas). Ver `AI_CONTEXT.md` §8.
+- **Gap `fincore_lang`:** la detección actual usa solo `navigator`; la regla dice localStorage `fincore_lang` con fallback. Corregir esto es **High-Impact** (requiere mini-RFC + aprobación de Sebas). Ver `AI_CONTEXT.md` (sección "Gaps conocidos").
 - **Claves con puntos:** i18next interpreta `.` como separador de nested keys; usar flat keys
 - **Plurales:** i18next soporta `_one`, `_other` suffixes para pluralización
 - **Texto en atributos:** `aria-label`, `placeholder`, `title` también deben usar `t()`

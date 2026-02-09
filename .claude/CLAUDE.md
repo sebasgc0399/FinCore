@@ -3,13 +3,13 @@
 ## Jerarquía de documentos
 
 1. **`AGENTS.md` es la constitución del proyecto. Síguelo exactamente.**
-2. `AI_CONTEXT.md` tiene el estado actual de desarrollo y gaps conocidos.
+2. `AI_CONTEXT.md` es el índice de contexto rápido (status, gaps, links, briefing template).
 3. `.claude/rules/` contiene reglas contextuales cargadas automáticamente por ruta.
 
 ## Orden de lectura recomendado
 
 1. `AGENTS.md` — reglas y pilares de arquitectura
-2. `AI_CONTEXT.md` — estado actual, gaps, modelo de datos
+2. `AI_CONTEXT.md` — índice de contexto, status y gaps
 3. `frontend/src/types/db-schema.ts` — contratos Zod canónicos
 4. `firestore.rules` — restricciones de seguridad
 5. Archivos del feature relacionado con la tarea asignada
